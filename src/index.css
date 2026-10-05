@@ -1,0 +1,74 @@
+@import "tailwindcss";
+
+:root {
+  --font-onest: "Onest";
+  --font-unbounded: "Unbounded";
+  --background: #ff6a3d;
+  --paper: #fff4e2;
+  --paper-2: #f6e6cb;
+  --ink: #111111;
+  --muted: #4a453e;
+  --zone-red: #d93a2b;
+  --zone-yellow: #f5b70a;
+  --zone-green: #1f9d55;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-paper: var(--paper);
+  --color-paper-2: var(--paper-2);
+  --color-ink: var(--ink);
+  --color-muted: var(--muted);
+  --color-zone-red: var(--zone-red);
+  --color-zone-yellow: var(--zone-yellow);
+  --color-zone-green: var(--zone-green);
+  --font-sans: var(--font-onest), ui-sans-serif, system-ui, sans-serif;
+  --font-display: var(--font-unbounded), var(--font-onest), sans-serif;
+  --shadow-hard: 6px 6px 0 var(--ink);
+  --shadow-hard-sm: 3px 3px 0 var(--ink);
+  --shadow-hard-lg: 8px 8px 0 var(--ink);
+}
+
+html {
+  color-scheme: light;
+}
+
+body {
+  background: var(--background);
+  color: var(--ink);
+  font-family: var(--font-sans);
+}
+
+::selection {
+  background: var(--ink);
+  color: var(--paper);
+}
+
+/* Нажатие «вдавливает» объект в тень. */
+.press {
+  transition: transform 120ms ease, box-shadow 120ms ease;
+}
+.press:hover {
+  transform: translate(-1px, -1px);
+}
+.press:active {
+  transform: translate(3px, 3px);
+  box-shadow: none;
+}
+
+@media print {
+  :root {
+    --background: #ffffff;
+  }
+  body {
+    background: #fff;
+    print-color-adjust: exact;
+    -webkit-print-color-adjust: exact;
+  }
+  .no-print {
+    display: none !important;
+  }
+  .print-break {
+    break-inside: avoid;
+  }
+}
