@@ -35,6 +35,17 @@ export interface ArchetypeText {
   protocol: { repair: [string, string]; growth: [string, string] };
 }
 
+export type SphereId = "work" | "family" | "friends" | "self";
+
+/** Расширенный разбор архетипа: суперсилы, сферы жизни, книги и план на месяц. */
+export interface ArchetypeExtras {
+  superpowers: { title: string; text: string }[];
+  spheres: Record<SphereId, string>;
+  books: { title: string; author: string }[];
+  /** План на 30 дней: по одному шагу на неделю. */
+  plan: [string, string, string, string];
+}
+
 export interface SelfEsteemText {
   title: string;
   formula: string;
@@ -94,6 +105,23 @@ export interface UiText {
   scale: [string, string, string, string, string];
   hints: string[];
   // Результаты
+  superTitle: string;
+  superLead: string;
+  spheresTitle: string;
+  spheresLead: string;
+  sphereNames: Record<SphereId, string>;
+  booksTitle: string;
+  booksLead: string;
+  planTitle: string;
+  planLead: string;
+  week: (n: number) => string;
+  nextTitle: string;
+  nextLead: string;
+  nextItems: { title: string; text: string }[];
+  forTalent: string;
+  pageOf: (n: number, total: number) => string;
+  pdfBusy: string;
+  pdfCardsTitle: string;
   passport: string;
   handTitle: string;
   handLead: (names: string) => string;
@@ -232,6 +260,7 @@ export interface Content {
   ui: UiText;
   landing: LandingText;
   archetypes: Record<ArchetypeId, ArchetypeText>;
+  extras: Record<ArchetypeId, ArchetypeExtras>;
   /** Тексты 20 дилемм в том же порядке, что и DILEMMAS. */
   dilemmas: { a: string; b: string }[];
   markers: Record<ArchetypeId, Record<MaturityKind, string>>;

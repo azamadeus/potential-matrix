@@ -9,10 +9,12 @@ import { MaturityThermometer } from "./MaturityThermometer";
 export function ArchetypeCard({ result }: { result: ArchetypeResult }) {
   const { c } = useLang();
   const a = c.archetypes[result.id];
+  // Два теневых утверждения сводим в одну оценку: так «Тень» не дублируется.
+  const shadow = (result.answers.shadow_1 + result.answers.shadow_2) / 2;
+  const fmt = (v: number) => String(Math.round(v * 10) / 10).replace(".", ",");
   const stats = [
-    [c.ui.shadow, result.answers.shadow_1, false],
-    [c.ui.shadow, result.answers.shadow_2, false],
-    [c.ui.grounded, result.answers.grounded, true],
+    [c.ui.shadow, fmt(shadow), false],
+    [c.ui.grounded, fmt(result.answers.grounded), true],
   ] as const;
   return (
     <article className="flex flex-col gap-4 rounded-[24px] border-2 border-ink bg-paper p-3.5 shadow-hard-lg print-break">
@@ -31,7 +33,7 @@ export function ArchetypeCard({ result }: { result: ArchetypeResult }) {
         <h3 className="font-display text-[22px] font-extrabold leading-[1.05] tracking-[-0.02em] break-words">{a.name}</h3>
         <p className="text-[15px] leading-snug">{a.essence}</p>
       </div>
-      <dl className="grid grid-cols-3 gap-2 px-1">
+      <dl className="grid grid-cols-2 gap-2 px-1">
         {stats.map(([label, v, grounded], i) => (
           <div
             key={i}

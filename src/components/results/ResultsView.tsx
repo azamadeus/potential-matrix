@@ -4,7 +4,11 @@ import type { TestResult } from "@/lib/types";
 import { ArchetypeCard } from "./ArchetypeCard";
 import { DiagnosisSection } from "./DiagnosisSection";
 import { ExportActions } from "./ExportActions";
+import { NextSection } from "./NextSection";
+import { PlanSection } from "./PlanSection";
 import { ProtocolSection } from "./ProtocolSection";
+import { SpheresSection } from "./SpheresSection";
+import { SuperpowersSection } from "./SuperpowersSection";
 import { RadarChart } from "./RadarChart";
 import { SelfEsteemBadge, ValidityWarnings } from "./SelfEsteemBadge";
 
@@ -44,12 +48,28 @@ export function ResultsView({ result, onRestart }: { result: TestResult; onResta
         </Card>
       </section>
 
+      <Section title={c.ui.superTitle} subtitle={c.ui.superLead}>
+        <SuperpowersSection results={result.top} />
+      </Section>
+
       <Section title={c.ui.nowTitle} subtitle={c.ui.nowLead}>
         <DiagnosisSection results={result.top} />
       </Section>
 
+      <Section title={c.ui.spheresTitle} subtitle={c.ui.spheresLead}>
+        <SpheresSection results={result.top} />
+      </Section>
+
       <Section title={c.ui.levelUpTitle} subtitle={c.ui.levelUpLead}>
         <ProtocolSection result={result} />
+      </Section>
+
+      <Section title={c.ui.planTitle} subtitle={c.ui.planLead}>
+        <PlanSection result={result} />
+      </Section>
+
+      <Section title={c.ui.nextTitle} subtitle={c.ui.nextLead}>
+        <NextSection />
       </Section>
 
       <footer className="flex flex-col gap-4 border-t-2 border-ink pt-6">

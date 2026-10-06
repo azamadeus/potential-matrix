@@ -34,6 +34,11 @@ describe.each(LANGS)("content %s", (_, c) => {
       expect(a.roots).toHaveLength(3);
       expect(a.tools).toHaveLength(3);
       expect(Object.keys(c.markers[id]).sort()).toEqual(["grounded", "shadow_1", "shadow_2"]);
+      const x = c.extras[id];
+      expect(x.superpowers).toHaveLength(3);
+      expect(Object.keys(x.spheres).sort()).toEqual(["family", "friends", "self", "work"]);
+      expect(x.books).toHaveLength(3);
+      expect(x.plan).toHaveLength(4);
     }
     expect(c.ui.scale).toHaveLength(5);
   });

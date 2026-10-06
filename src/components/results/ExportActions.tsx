@@ -1,6 +1,6 @@
 
 import { useState } from "react";
-import { Check, Copy, Download, Image as ImageIcon, Printer, RotateCcw } from "lucide-react";
+import { Check, Copy, FileDown, Image as ImageIcon, RotateCcw } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { buildTextReport } from "@/lib/report";
 import { useLang } from "@/i18n/context";
@@ -11,6 +11,7 @@ export function ExportActions({ result, onRestart }: { result: TestResult; onRes
   const { c, lang } = useLang();
   const [copied, setCopied] = useState(false);
   const [storyBusy, setStoryBusy] = useState(false);
+  const [pdfBusy, setPdfBusy] = useState(false);
   const text = () => buildTextReport(c, result);
 
   const copy = async () => {
@@ -28,14 +29,22 @@ export function ExportActions({ result, onRestart }: { result: TestResult; onRes
     setTimeout(() => setCopied(false), 2000);
   };
 
-  const download = () => {
-    const blob = new Blob([text()], { type: "text/plain;charset=utf-8" });
-    const url = URL.createObjectURL(blob);
-    const link = document.createElement("a");
-    link.href = url;
-    link.download = `passport-${lang}-${result.completedAt.slice(0, 10)}.txt`;
-    link.click();
-    URL.revokeObjectURL(url);
+  /** Настоящий A4 PDF: собирается в браузере, библиотека и шрифты грузятся при первом нажатии. */
+  const downloadPdf = async () => {
+    setPdfBusy(true);
+    try {
+      const { buildReportPdf } = await import("@/lib/pdf/buildPdf");
+      const ground = getComputedStyle(document.documentElement).getPropertyValue("--background").trim() || "#ff6a3d";
+      const blob = await buildReportPdf({ c, lang, result, ground });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.href = url;
+      link.download = `passport-${lang}-${result.completedAt.slice(0, 10)}.pdf`;
+      link.click();
+      setTimeout(() => URL.revokeObjectURL(url), 10_000);
+    } finally {
+      setPdfBusy(false);
+    }
   };
 
   /** На телефоне открывается системное меню «Поделиться» (сразу в сторис), иначе скачивается PNG. */
@@ -68,11 +77,8 @@ export function ExportActions({ result, onRestart }: { result: TestResult; onRes
       <Button onClick={story} disabled={storyBusy}>
         <ImageIcon className="size-4" /> {storyBusy ? c.ui.storyBusy : c.ui.story}
       </Button>
-      <Button variant="secondary" onClick={download}>
-        <Download className="size-4" /> {c.ui.download}
-      </Button>
-      <Button variant="secondary" onClick={() => window.print()}>
-        <Printer className="size-4" /> {c.ui.pdf}
+      <Button variant="secondary" onClick={downloadPdf} disabled={pdfBusy}>
+        <FileDown className="size-4" /> {pdfBusy ? c.ui.pdfBusy : c.ui.pdf}
       </Button>
       <Button variant="secondary" onClick={copy}>
         {copied ? <Check className="size-4" /> : <Copy className="size-4" />}
