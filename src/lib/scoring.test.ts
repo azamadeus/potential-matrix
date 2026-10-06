@@ -131,7 +131,7 @@ describe("stage 2", () => {
     const items = buildStage2Items(["ARCH_01", "ARCH_06", "ARCH_11"]);
     expect(items).toHaveLength(12);
     expect(items.filter((i) => i.type === "lie")).toHaveLength(3);
-    const ids = new Set(items.map((i) => i.question.id));
+    const ids = new Set(items.map((i) => i.id));
     expect(ids.size).toBe(12);
   });
 });

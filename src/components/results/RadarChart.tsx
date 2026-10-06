@@ -1,6 +1,7 @@
 
 import { useState } from "react";
-import { ARCHETYPES, ARCHETYPE_IDS } from "@/data/archetypes";
+import { ARCHETYPE_IDS } from "@/data/archetypes";
+import { useLang } from "@/i18n/context";
 import type { ArchetypeId } from "@/lib/types";
 
 const W = 580;
@@ -17,6 +18,7 @@ function point(i: number, value: number, max: number) {
 
 /** Радар 12 архетипов по голосам Этапа 1; ТОП-3 выделен. */
 export function RadarChart({ scores, top }: { scores: Record<ArchetypeId, number>; top: ArchetypeId[] }) {
+  const { c } = useLang();
   const [hover, setHover] = useState<number | null>(null);
   const max = Math.max(4, ...Object.values(scores));
   const rings = Array.from({ length: max }, (_, i) => i + 1);
@@ -30,7 +32,7 @@ export function RadarChart({ scores, top }: { scores: Record<ArchetypeId, number
         viewBox={`0 0 ${W} ${H}`}
         className="w-full h-auto max-w-[580px] mx-auto block"
         role="img"
-        aria-label="Радарная диаграмма выраженности 12 архетипов"
+        aria-label={c.ui.deckAria}
       >
         {rings.map((r) => (
           <polygon
@@ -87,7 +89,7 @@ export function RadarChart({ scores, top }: { scores: Record<ArchetypeId, number
                 fontWeight={isTop ? 800 : 500}
                 fill={isTop ? "var(--ink)" : "var(--muted)"}
               >
-                {ARCHETYPES[id].short}
+                {c.archetypes[id].short}
               </text>
             </g>
           );
@@ -95,19 +97,19 @@ export function RadarChart({ scores, top }: { scores: Record<ArchetypeId, number
       </svg>
       {hover !== null ? (
         <div className="pointer-events-none absolute left-1/2 top-2 -translate-x-1/2 rounded-[12px] border-2 border-ink bg-ink px-3 py-2 text-sm text-paper">
-          <div className="font-semibold">{ARCHETYPES[ARCHETYPE_IDS[hover]].name}</div>
-          <div className="tabular-nums">Выборов в Этапе 1: {scores[ARCHETYPE_IDS[hover]]}</div>
+          <div className="font-semibold">{c.archetypes[ARCHETYPE_IDS[hover]].name}</div>
+          <div className="tabular-nums">{c.ui.pickedInDilemmas(scores[ARCHETYPE_IDS[hover]])}</div>
         </div>
       ) : null}
       <details className="mt-3 text-sm no-print">
-        <summary className="cursor-pointer font-semibold underline decoration-2 underline-offset-4">Показать таблицей</summary>
+        <summary className="cursor-pointer font-semibold underline decoration-2 underline-offset-4">{c.ui.showTable}</summary>
         <table className="mt-2 w-full text-left">
           <tbody>
             {[...ARCHETYPE_IDS]
               .sort((a, b) => scores[b] - scores[a])
               .map((id) => (
                 <tr key={id} className="border-t border-ink/20">
-                  <td className="py-1.5 pr-2">{ARCHETYPES[id].name}</td>
+                  <td className="py-1.5 pr-2">{c.archetypes[id].name}</td>
                   <td className="py-1.5 text-right tabular-nums text-muted">{scores[id]}</td>
                 </tr>
               ))}

@@ -1,5 +1,6 @@
 import { ChevronLeft } from "lucide-react";
 import { Progress } from "@/components/ui/progress";
+import { useLang } from "@/i18n/context";
 
 export function ProgressHeader({
   stageLabel,
@@ -12,6 +13,7 @@ export function ProgressHeader({
   progress: number;
   onBack?: () => void;
 }) {
+  const { c } = useLang();
   return (
     <div className="flex flex-col gap-3">
       <div className="flex items-center justify-between gap-3 min-h-10">
@@ -20,7 +22,7 @@ export function ProgressHeader({
             <button
               type="button"
               onClick={onBack}
-              aria-label="Назад"
+              aria-label={c.ui.back}
               className="press flex size-10 shrink-0 cursor-pointer items-center justify-center rounded-full border-2 border-ink bg-paper shadow-hard-sm"
             >
               <ChevronLeft className="size-5" />
@@ -30,7 +32,7 @@ export function ProgressHeader({
         </div>
         <span className="shrink-0 whitespace-nowrap text-sm font-semibold tabular-nums">{counter}</span>
       </div>
-      <Progress value={progress} label="Прогресс прохождения" />
+      <Progress value={progress} label={c.ui.progress} />
     </div>
   );
 }

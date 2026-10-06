@@ -3,6 +3,14 @@
 :root {
   --font-onest: "Onest";
   --font-unbounded: "Unbounded";
+}
+
+/* В Unbounded нет казахских букв: для казахского заголовочный шрифт Montserrat. */
+:root:lang(kk) {
+  --font-unbounded: "Montserrat";
+}
+
+:root {
   --background: #ff6a3d;
   --paper: #fff4e2;
   --paper-2: #f6e6cb;

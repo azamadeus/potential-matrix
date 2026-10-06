@@ -1,9 +1,10 @@
-import { ARCHETYPES, ARCHETYPE_IDS } from "@/data/archetypes";
-import { DILEMMAS, LIE_QUESTIONS, MATURITY_QUESTIONS } from "@/data/questions";
+import { ARCHETYPE_GROUP, ARCHETYPE_IDS } from "@/data/archetypes";
+import { DILEMMAS, LIE_IDS } from "@/data/questions";
 import type {
   ArchetypeId,
   ArchetypeResult,
   Likert,
+  MaturityKind,
   SelfEsteemType,
   Stage2Item,
   TestResult,
@@ -30,7 +31,7 @@ export function tallyVotes(choices: Choice[]): Record<ArchetypeId, number> {
   >;
   choices.forEach((choice, i) => {
     const dilemma = DILEMMAS[i];
-    if (dilemma) scores[dilemma[choice].archetype] += 1;
+    if (dilemma) scores[dilemma[choice]] += 1;
   });
   return scores;
 }
@@ -120,7 +121,7 @@ export function classifySelfEsteem(
   let logical = 0;
   let emotional = 0;
   for (const { id, votes } of top) {
-    const group = ARCHETYPES[id].group;
+    const group = ARCHETYPE_GROUP[id];
     if (group === "logical") logical += votes;
     if (group === "emotional") emotional += votes;
   }
@@ -135,11 +136,13 @@ export function classifySelfEsteem(
  * Вопросы одного архетипа и контрольные вопросы перемешаны, чтобы не считывалась структура.
  */
 export function buildStage2Items(top: ArchetypeId[]): Stage2Item[] {
-  const q = (id: ArchetypeId, kind: "shadow_1" | "shadow_2" | "grounded"): Stage2Item => ({
+  const q = (id: ArchetypeId, kind: MaturityKind): Stage2Item => ({
     type: "maturity",
-    question: MATURITY_QUESTIONS.find((m) => m.archetype === id && m.kind === kind)!,
+    id: `${id}_${kind}`,
+    archetype: id,
+    kind,
   });
-  const lie = (i: number): Stage2Item => ({ type: "lie", question: LIE_QUESTIONS[i] });
+  const lie = (i: 0 | 1 | 2): Stage2Item => ({ type: "lie", id: LIE_IDS[i], index: i });
   const [a, b, c] = top;
   return [
     q(a, "shadow_1"),
@@ -167,7 +170,7 @@ export function computeResult(
     (["shadow_1", "shadow_2", "grounded"] as const).map((k) => answers[`${id}_${k}`]),
   );
   const validity = assessValidity(
-    LIE_QUESTIONS.map((l) => answers[l.id]),
+    LIE_IDS.map((l) => answers[l]),
     maturityAnswers,
     Object.values(timesMs),
   );

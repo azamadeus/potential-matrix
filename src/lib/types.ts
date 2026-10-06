@@ -17,60 +17,25 @@ export type Zone = "red" | "yellow" | "green";
 /** Группа архетипа для определения типа самооценки. */
 export type ArchetypeGroup = "logical" | "emotional" | "neutral";
 
-export interface Archetype {
-  id: ArchetypeId;
-  name: string;
-  /** Короткая подпись для оси диаграммы. */
-  short: string;
-  /** Исходные темы Gallup CliftonStrengths, из которых собран архетип. */
-  themes: string[];
-  group: ArchetypeGroup;
-  tagline: string;
-  /** Дар архетипа в зрелом состоянии. */
-  essence: string;
-  /** Название теневой (гиперкомпенсаторной) стратегии. */
-  shadowPattern: string;
-  blindSpot: string;
-  hiddenRisk: string;
-  /** Утверждение для динамического вопроса при ничьей. */
-  tieStatement: string;
-  /** Диагноз текущего состояния по зонам зрелости. */
-  diagnosis: Record<Zone, string>;
-  /** 2 шага трансформации: repair — для красной/жёлтой зоны, growth — для зелёной. */
-  protocol: { repair: [string, string]; growth: [string, string] };
-}
-
-export interface DilemmaOption {
-  archetype: ArchetypeId;
-  text: string;
-}
-
-export interface Dilemma {
+export interface DilemmaPair {
   id: number;
-  a: DilemmaOption;
-  b: DilemmaOption;
+  /** Архетип варианта «А». */
+  a: ArchetypeId;
+  /** Архетип варианта «Б». */
+  b: ArchetypeId;
 }
 
 export type MaturityKind = "shadow_1" | "shadow_2" | "grounded";
 
-export interface MaturityQuestion {
-  id: string;
-  archetype: ArchetypeId;
-  kind: MaturityKind;
-  text: string;
-}
+export type LieId = "L1" | "L2" | "L3";
 
-export interface LieQuestion {
-  id: "L1" | "L2" | "L3";
-  text: string;
-}
-
-/** Ответ 1–5 по шкале Ликерта. */
+/** Ответ 1–5 по шкале частоты. */
 export type Likert = 1 | 2 | 3 | 4 | 5;
 
+/** Вопрос Этапа 2. Тексты берутся из языкового файла по id. */
 export type Stage2Item =
-  | { type: "maturity"; question: MaturityQuestion }
-  | { type: "lie"; question: LieQuestion };
+  | { type: "maturity"; id: string; archetype: ArchetypeId; kind: MaturityKind }
+  | { type: "lie"; id: LieId; index: 0 | 1 | 2 };
 
 export interface TieBreak {
   /** Спорные архетипы, между которыми нужно выбрать. */

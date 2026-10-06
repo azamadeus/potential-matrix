@@ -1,9 +1,9 @@
 /** Цвет «стола», на котором лежат карты. Текст везде чёрный, поэтому все варианты читаются одинаково. */
 export const GROUNDS = [
-  { id: "vermilion", label: "Киноварь", color: "#ff6a3d" },
-  { id: "lime", label: "Лайм", color: "#b7e36a" },
-  { id: "sky", label: "Небо", color: "#7ec8f2" },
-  { id: "sun", label: "Солнце", color: "#f6c945" },
+  { id: "vermilion", color: "#ff6a3d" },
+  { id: "lime", color: "#b7e36a" },
+  { id: "sky", color: "#7ec8f2" },
+  { id: "sun", color: "#f6c945" },
 ] as const;
 
 export type GroundId = (typeof GROUNDS)[number]["id"];

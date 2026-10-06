@@ -1,22 +1,23 @@
 
 import { motion } from "framer-motion";
 import { ArrowRight } from "lucide-react";
-import { ARCHETYPES } from "@/data/archetypes";
 import { ArchetypeGlyph } from "@/components/ArchetypeGlyph";
 import { cardNumber } from "@/data/glyphs";
 import { Button } from "@/components/ui/button";
+import { useLang } from "@/i18n/context";
 import type { ArchetypeId } from "@/lib/types";
 
 export function Stage2Intro({ top, onContinue }: { top: ArchetypeId[]; onContinue: () => void }) {
+  const { c } = useLang();
   return (
     <div className="flex flex-col gap-8">
       <div className="flex flex-col gap-2">
-        <span className="font-semibold">Первый этап позади</span>
-        <h2 className="font-display text-[30px] sm:text-5xl font-extrabold leading-[1.02] tracking-[-0.03em]">Вам выпали эти карты</h2>
+        <span className="font-semibold">{c.ui.stage2Done}</span>
+        <h2 className="font-display text-[30px] sm:text-5xl font-extrabold leading-[1.02] tracking-[-0.03em]">{c.ui.stage2Title}</h2>
       </div>
       <div className="grid gap-4 sm:grid-cols-3" style={{ perspective: 1000 }}>
         {top.map((id, i) => {
-          const a = ARCHETYPES[id];
+          const a = c.archetypes[id];
           return (
             <motion.div
               key={id}
@@ -38,11 +39,10 @@ export function Stage2Intro({ top, onContinue }: { top: ArchetypeId[]; onContinu
         })}
       </div>
       <p className="text-lg font-medium max-w-2xl leading-snug">
-        Теперь проверим, как каждая карта играет сейчас. Будет 12 утверждений. Отметьте, как часто это бывает с вами в
-        последние недели.
+        {c.ui.stage2Lead}
       </p>
       <Button size="lg" onClick={onContinue} className="w-full sm:w-auto self-start">
-        Проверить зрелость <ArrowRight className="size-5" />
+        {c.ui.stage2Start} <ArrowRight className="size-5" />
       </Button>
     </div>
   );

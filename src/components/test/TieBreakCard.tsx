@@ -1,10 +1,11 @@
 
 import { useState } from "react";
-import { ARCHETYPES } from "@/data/archetypes";
+import { useLang } from "@/i18n/context";
 import { cn } from "@/lib/utils";
 import type { ArchetypeId, TieBreak } from "@/lib/types";
 
 export function TieBreakCard({ tie, onPick }: { tie: TieBreak; onPick: (id: ArchetypeId) => void }) {
+  const { c } = useLang();
   const [selected, setSelected] = useState<ArchetypeId | null>(null);
 
   const pick = (id: ArchetypeId) => {
@@ -17,10 +18,10 @@ export function TieBreakCard({ tie, onPick }: { tie: TieBreak; onPick: (id: Arch
     <div className="flex flex-col gap-6">
       <div className="flex flex-col gap-2">
         <span className="inline-flex self-start rounded-full border-2 border-ink bg-paper px-3 py-1 text-sm font-semibold">
-          Ничья в колоде
+          {c.ui.tieBadge}
         </span>
         <h2 className="font-display text-2xl sm:text-3xl font-extrabold leading-tight tracking-[-0.02em]">
-          Несколько карт набрали поровну. Какая точнее про вас?
+          {c.ui.tieTitle}
         </h2>
       </div>
       <div className="grid gap-4">
@@ -37,7 +38,7 @@ export function TieBreakCard({ tie, onPick }: { tie: TieBreak; onPick: (id: Arch
                 selected && !isSelected && "opacity-40",
               )}
             >
-              {ARCHETYPES[id].tieStatement}
+              {c.archetypes[id].tieStatement}
             </button>
           );
         })}

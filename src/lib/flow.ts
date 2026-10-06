@@ -89,8 +89,8 @@ export function flowReducer(state: FlowState, action: FlowAction): FlowState {
     case "answer": {
       if (state.phase !== "stage2") return state;
       const item = state.items[state.index];
-      const answers = { ...state.answers, [item.question.id]: action.value };
-      const times = { ...state.times, [item.question.id]: action.ms };
+      const answers = { ...state.answers, [item.id]: action.value };
+      const times = { ...state.times, [item.id]: action.ms };
       if (state.index + 1 < state.items.length) {
         return { ...state, answers, times, index: state.index + 1 };
       }

@@ -1,11 +1,12 @@
 
 import { motion } from "framer-motion";
 import { Sparkles } from "lucide-react";
-import { ARCHETYPES } from "@/data/archetypes";
+import { useLang } from "@/i18n/context";
 import type { ArchetypeId } from "@/lib/types";
 
 /** Промежуточная «подсказка» Этапа 1 — подогревает интерес к результату. */
 export function InsightBanner({ leader, answered }: { leader: ArchetypeId | null; answered: number }) {
+  const { c } = useLang();
   return (
     <motion.div
       initial={{ opacity: 0, y: -8 }}
@@ -16,16 +17,7 @@ export function InsightBanner({ leader, answered }: { leader: ArchetypeId | null
       role="status"
     >
       <Sparkles className="size-5 shrink-0 mt-0.5" aria-hidden />
-      <span>
-        {leader ? (
-          <>
-            После {answered} ответов лидирует <b>{ARCHETYPES[leader].name}</b>. Посмотрим,
-            удержит ли позицию.
-          </>
-        ) : (
-          <>После {answered} ответов несколько карт идут вровень.</>
-        )}
-      </span>
+      <span>{leader ? c.ui.insightLeader(answered, c.archetypes[leader].name) : c.ui.insightEven(answered)}</span>
     </motion.div>
   );
 }

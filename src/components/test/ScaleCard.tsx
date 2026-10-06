@@ -1,15 +1,13 @@
 
 import { useEffect, useRef, useState } from "react";
-import { FREQUENCY_SCALE, HONESTY_HINTS } from "@/data/questions";
+import { useLang } from "@/i18n/context";
 import { cn } from "@/lib/utils";
 import type { Likert, Stage2Item } from "@/lib/types";
 
 /**
- * Все утверждения Этапа 2 (включая контрольные) отвечаются по одной поведенческой шкале частоты —
+ * Все утверждения Этапа 2 (включая контрольные) отвечаются по одной поведенческой шкале частоты:
  * так контрольные вопросы не выделяются, а ответ опирается на конкретный опыт, а не на образ себя.
  */
-const PROMPT = "Как часто это бывает с вами в последнее время?";
-
 export function ScaleCard({
   item,
   index,
@@ -21,6 +19,9 @@ export function ScaleCard({
   previous?: Likert;
   onAnswer: (value: Likert, ms: number) => void;
 }) {
+  const { c } = useLang();
+  const prompt = c.ui.scalePrompt;
+  const text = item.type === "lie" ? c.lie[item.index] : c.markers[item.archetype][item.kind];
   const [selected, setSelected] = useState<Likert | null>(null);
   const shownAt = useRef(0);
 
@@ -47,12 +48,12 @@ export function ScaleCard({
   return (
     <div className="flex flex-col gap-7">
       <div className="rounded-[22px] border-2 border-ink bg-paper p-5 sm:p-7 shadow-hard flex flex-col gap-3">
-        <span className="text-sm font-semibold text-muted">{PROMPT}</span>
-        <h2 className="text-xl sm:text-2xl font-semibold leading-snug">{item.question.text}</h2>
+        <span className="text-sm font-semibold text-muted">{prompt}</span>
+        <h2 className="text-xl sm:text-2xl font-semibold leading-snug">{text}</h2>
       </div>
 
-      <div className="grid grid-cols-5 gap-2 sm:gap-3" role="radiogroup" aria-label={PROMPT}>
-        {FREQUENCY_SCALE.map((label, i) => {
+      <div className="grid grid-cols-5 gap-2 sm:gap-3" role="radiogroup" aria-label={prompt}>
+        {c.ui.scale.map((label, i) => {
           const v = (i + 1) as Likert;
           const isSelected = selected === v;
           return (
@@ -77,7 +78,7 @@ export function ScaleCard({
           );
         })}
       </div>
-      <p className="text-[15px] font-medium">{HONESTY_HINTS[index % HONESTY_HINTS.length]}</p>
+      <p className="text-[15px] font-medium">{c.ui.hints[index % c.ui.hints.length]}</p>
     </div>
   );
 }

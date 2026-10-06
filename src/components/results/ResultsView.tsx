@@ -1,5 +1,5 @@
-import { ARCHETYPES } from "@/data/archetypes";
 import { Card } from "@/components/ui/card";
+import { useLang } from "@/i18n/context";
 import type { TestResult } from "@/lib/types";
 import { ArchetypeCard } from "./ArchetypeCard";
 import { DiagnosisSection } from "./DiagnosisSection";
@@ -9,18 +9,20 @@ import { RadarChart } from "./RadarChart";
 import { SelfEsteemBadge, ValidityWarnings } from "./SelfEsteemBadge";
 
 export function ResultsView({ result, onRestart }: { result: TestResult; onRestart: () => void }) {
+  const { c } = useLang();
   const topIds = result.top.map((t) => t.id);
+  const date = c.ui.formatDate(new Date(result.completedAt));
   return (
     <div className="flex flex-col gap-14">
       <header className="flex flex-col gap-4">
         <span className="font-semibold">
-          Паспорт Потенциала ·{" "}
-          {new Date(result.completedAt).toLocaleDateString("ru-RU", { day: "numeric", month: "long", year: "numeric" })}
+          {c.ui.passport} · {date}
         </span>
-        <h1 className="font-display text-[36px] sm:text-6xl font-extrabold leading-[1.02] tracking-[-0.03em]">Ваша рука</h1>
+        <h1 className="font-display text-[36px] sm:text-6xl font-extrabold leading-[1.02] tracking-[-0.03em]">
+          {c.ui.handTitle}
+        </h1>
         <p className="text-lg font-medium leading-snug max-w-2xl">
-          Ваши сильнейшие карты: {result.top.map((t) => ARCHETYPES[t.id].name).join(", ")}. Ниже видно, как каждая из
-          них играет сейчас и что с этим делать.
+          {c.ui.handLead(result.top.map((t) => c.archetypes[t.id].name).join(", "))}
         </p>
         <ExportActions result={result} onRestart={onRestart} />
       </header>
@@ -36,25 +38,23 @@ export function ResultsView({ result, onRestart }: { result: TestResult; onResta
       <section className="grid gap-6 lg:grid-cols-[1.15fr_1fr] items-start">
         <SelfEsteemBadge result={result} />
         <Card className="p-4 sm:p-6 print-break">
-          <h2 className="font-display text-xl font-extrabold">Вся колода</h2>
-          <p className="text-sm text-muted mt-1 mb-2">Сколько раз вы выбрали каждую из 12 карт в дилеммах</p>
+          <h2 className="font-display text-xl font-extrabold">{c.ui.deck}</h2>
+          <p className="text-sm text-muted mt-1 mb-2">{c.ui.deckLead}</p>
           <RadarChart scores={result.scores} top={topIds} />
         </Card>
       </section>
 
-      <Section title="Что происходит сейчас" subtitle="Тени, слепые зоны и скрытые риски каждой карты">
+      <Section title={c.ui.nowTitle} subtitle={c.ui.nowLead}>
         <DiagnosisSection results={result.top} />
       </Section>
 
-      <Section title="Как прокачать" subtitle="По два конкретных шага на карту. Начните с самой незрелой">
+      <Section title={c.ui.levelUpTitle} subtitle={c.ui.levelUpLead}>
         <ProtocolSection result={result} />
       </Section>
 
       <footer className="flex flex-col gap-4 border-t-2 border-ink pt-6">
         <ExportActions result={result} onRestart={onRestart} />
-        <p className="text-sm font-medium">
-          Матрица Потенциала и Зрелости: авторская методика самопознания. Результат не является клиническим диагнозом.
-        </p>
+        <p className="text-sm font-medium">{c.ui.disclaimer}</p>
       </footer>
     </div>
   );
