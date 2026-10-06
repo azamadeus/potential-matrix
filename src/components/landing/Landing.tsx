@@ -15,14 +15,15 @@ import { CheckoutDialog, type CheckoutNotice } from "./CheckoutDialog";
 import { PricingSection } from "./PricingSection";
 
 /** Вымышленный результат для блока «Как выглядит результат». */
-function sample(id: ArchetypeId, rank: number, votes: number, s1: Likert, s2: Likert, g: Likert): ArchetypeResult {
-  const mi = maturityIndex(s1, s2, g);
-  return { id, rank, votes, answers: { shadow_1: s1, shadow_2: s2, grounded: g }, rawMI: mi, mi, zone: zoneOf(mi), capped: false };
+function sample(id: ArchetypeId, rank: number, votes: number, shadow: Likert, grounded: Likert): ArchetypeResult {
+  const mi = maturityIndex([shadow], [grounded]);
+  const answers = { shadow_1: shadow, shadow_2: shadow, shadow_3: shadow, grounded, grounded_2: grounded };
+  return { id, rank, votes, answers, shadowAvg: shadow, groundedAvg: grounded, rawMI: mi, mi, zone: zoneOf(mi), capped: false };
 }
 const EXAMPLE: ArchetypeResult[] = [
-  sample("ARCH_07", 1, 4, 3, 3, 4),
-  sample("ARCH_09", 2, 3, 1, 2, 4),
-  sample("ARCH_01", 3, 3, 5, 4, 2),
+  sample("ARCH_07", 1, 7, 3, 4),
+  sample("ARCH_09", 2, 6, 2, 4),
+  sample("ARCH_01", 3, 6, 4, 2),
 ];
 
 const HERO_FAN: { id: ArchetypeId; cls: string }[] = [

@@ -1,5 +1,6 @@
 import { ARCHETYPE_GROUP, ARCHETYPE_IDS } from "@/data/archetypes";
 import { DILEMMAS, LIE_IDS } from "@/data/questions";
+import { GROUNDED_KINDS, MATURITY_KINDS, SHADOW_KINDS } from "./types";
 import type {
   ArchetypeId,
   ArchetypeResult,
@@ -74,9 +75,17 @@ export function resolveTop(
   return { status: "resolved", top: sorted.slice(0, TOP_N) };
 }
 
-/** MI = grounded·2 / ((shadow_1 + shadow_2) + grounded·2) · 100% */
-export function maturityIndex(shadow1: number, shadow2: number, grounded: number): number {
-  return ((grounded * 2) / (shadow1 + shadow2 + grounded * 2)) * 100;
+export const mean = (xs: number[]) => xs.reduce((s, x) => s + x, 0) / xs.length;
+
+/**
+ * Индекс зрелости: MI = grounded·2 / ((shadow_1 + shadow_2) + grounded·2) · 100%.
+ * Для нескольких утверждений вместо суммы берутся средние: MI = ḡ / (s̄ + ḡ) · 100%.
+ * Для набора «два теневых, одно опорное» это ровно исходная формула.
+ */
+export function maturityIndex(shadow: number[], grounded: number[]): number {
+  const s = mean(shadow);
+  const g = mean(grounded);
+  return (g / (s + g)) * 100;
 }
 
 export function zoneOf(mi: number): Zone {
@@ -132,8 +141,9 @@ export function classifySelfEsteem(
 }
 
 /**
- * Этап 2: 9 вопросов зрелости для ТОП-3 + 3 скрытых контрольных вопроса.
- * Вопросы одного архетипа и контрольные вопросы перемешаны, чтобы не считывалась структура.
+ * Этап 2: 15 утверждений зрелости (по 5 на каждую из ТОП-3) + 3 скрытых контрольных вопроса.
+ * Утверждения одной карты не идут подряд, а контрольные вопросы стоят среди остальных,
+ * чтобы не считывалась структура.
  */
 export function buildStage2Items(top: ArchetypeId[]): Stage2Item[] {
   const q = (id: ArchetypeId, kind: MaturityKind): Stage2Item => ({
@@ -148,15 +158,21 @@ export function buildStage2Items(top: ArchetypeId[]): Stage2Item[] {
     q(a, "shadow_1"),
     q(b, "grounded"),
     q(c, "shadow_1"),
-    lie(0),
-    q(a, "grounded"),
-    q(b, "shadow_1"),
-    q(c, "shadow_2"),
-    lie(1),
-    q(b, "shadow_2"),
     q(a, "shadow_2"),
+    q(b, "shadow_1"),
+    lie(0),
     q(c, "grounded"),
+    q(a, "shadow_3"),
+    q(b, "shadow_2"),
+    q(c, "shadow_2"),
+    q(a, "grounded"),
+    lie(1),
+    q(b, "shadow_3"),
+    q(c, "shadow_3"),
+    q(a, "grounded_2"),
     lie(2),
+    q(b, "grounded_2"),
+    q(c, "grounded_2"),
   ];
 }
 
@@ -166,9 +182,7 @@ export function computeResult(
   answers: Record<string, Likert>,
   timesMs: Record<string, number> = {},
 ): TestResult {
-  const maturityAnswers = top.flatMap((id) =>
-    (["shadow_1", "shadow_2", "grounded"] as const).map((k) => answers[`${id}_${k}`]),
-  );
+  const maturityAnswers = top.flatMap((id) => MATURITY_KINDS.map((k) => answers[`${id}_${k}`]));
   const validity = assessValidity(
     LIE_IDS.map((l) => answers[l]),
     maturityAnswers,
@@ -176,17 +190,22 @@ export function computeResult(
   );
 
   const results: ArchetypeResult[] = top.map((id, i) => {
-    const s1 = answers[`${id}_shadow_1`];
-    const s2 = answers[`${id}_shadow_2`];
-    const g = answers[`${id}_grounded`];
-    const rawMI = maturityIndex(s1, s2, g);
+    const own = Object.fromEntries(MATURITY_KINDS.map((k) => [k, answers[`${id}_${k}`]])) as Record<MaturityKind, Likert>;
+    const shadowAvg = mean(SHADOW_KINDS.map((k) => own[k]));
+    const groundedAvg = mean(GROUNDED_KINDS.map((k) => own[k]));
+    const rawMI = maturityIndex(
+      SHADOW_KINDS.map((k) => own[k]),
+      GROUNDED_KINDS.map((k) => own[k]),
+    );
     const capped = validity.defenseFlag && rawMI > DEFENSE_MI_CAP;
     const mi = capped ? DEFENSE_MI_CAP : rawMI;
     return {
       id,
       rank: i + 1,
       votes: scores[id],
-      answers: { shadow_1: s1, shadow_2: s2, grounded: g },
+      answers: own,
+      shadowAvg,
+      groundedAvg,
       rawMI,
       mi,
       zone: zoneOf(mi),

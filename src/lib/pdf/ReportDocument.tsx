@@ -177,7 +177,6 @@ function Overview({ ctx, result }: { ctx: Ctx; result: TestResult }) {
       <View style={{ gap: 12 }}>
         {result.top.map((r) => {
           const a = c.archetypes[r.id];
-          const shadow = (r.answers.shadow_1 + r.answers.shadow_2) / 2;
           return (
             <Hard key={r.id} style={{ padding: 12, flexDirection: "row", gap: 12 }}>
               <View style={{ width: 66, height: 66, borderRadius: 10, backgroundColor: INK, alignItems: "center", justifyContent: "center" }}>
@@ -195,10 +194,10 @@ function Overview({ ctx, result }: { ctx: Ctx; result: TestResult }) {
                 </Text>
                 <Segments zone={r.zone} width={96} />
                 <Text style={{ ...small, marginTop: 6 }}>
-                  {c.ui.shadow} {String(Math.round(shadow * 10) / 10).replace(".", ",")}/5
+                  {c.ui.shadow} {String(Math.round(r.shadowAvg * 10) / 10).replace(".", ",")}/5
                 </Text>
                 <Text style={small}>
-                  {c.ui.grounded} {r.answers.grounded}/5
+                  {c.ui.grounded} {String(Math.round(r.groundedAvg * 10) / 10).replace(".", ",")}/5
                 </Text>
               </View>
             </Hard>

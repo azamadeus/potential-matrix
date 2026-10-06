@@ -25,7 +25,12 @@ export interface DilemmaPair {
   b: ArchetypeId;
 }
 
-export type MaturityKind = "shadow_1" | "shadow_2" | "grounded";
+/** Пять утверждений зрелости на карту: три теневых и два опорных. */
+export type MaturityKind = "shadow_1" | "shadow_2" | "shadow_3" | "grounded" | "grounded_2";
+
+export const SHADOW_KINDS: MaturityKind[] = ["shadow_1", "shadow_2", "shadow_3"];
+export const GROUNDED_KINDS: MaturityKind[] = ["grounded", "grounded_2"];
+export const MATURITY_KINDS: MaturityKind[] = [...SHADOW_KINDS, ...GROUNDED_KINDS];
 
 export type LieId = "L1" | "L2" | "L3";
 
@@ -46,7 +51,11 @@ export interface ArchetypeResult {
   id: ArchetypeId;
   rank: number;
   votes: number;
-  answers: { shadow_1: Likert; shadow_2: Likert; grounded: Likert };
+  answers: Record<MaturityKind, Likert>;
+  /** Среднее по теневым утверждениям (1–5). */
+  shadowAvg: number;
+  /** Среднее по опорным утверждениям (1–5). */
+  groundedAvg: number;
   /** MI до применения потолка защиты эго. */
   rawMI: number;
   /** Итоговый MI (с учётом потолка при defense_flag). */

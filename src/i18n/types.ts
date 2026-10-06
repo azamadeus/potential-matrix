@@ -261,7 +261,7 @@ export interface Content {
   landing: LandingText;
   archetypes: Record<ArchetypeId, ArchetypeText>;
   extras: Record<ArchetypeId, ArchetypeExtras>;
-  /** Тексты 20 дилемм в том же порядке, что и DILEMMAS. */
+  /** Тексты дилемм в том же порядке, что и DILEMMAS. */
   dilemmas: { a: string; b: string }[];
   markers: Record<ArchetypeId, Record<MaturityKind, string>>;
   /** Контрольные вопросы L1–L3. */

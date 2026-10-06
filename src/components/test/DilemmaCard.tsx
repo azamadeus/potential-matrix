@@ -5,7 +5,8 @@ import { cn } from "@/lib/utils";
 import type { Choice } from "@/lib/scoring";
 import { useLang } from "@/i18n/context";
 
-const TIME_LIMIT = 10;
+/** Сколько секунд на ответ. Таймер только подсказывает и ничего не пропускает. */
+const TIME_LIMIT = 21;
 const SWIPE_DISTANCE = 80;
 
 /** Постоянные «масти» сторон: не зависят от архетипа, чтобы не подсказывать ответ. */

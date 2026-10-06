@@ -33,7 +33,7 @@ describe.each(LANGS)("content %s", (_, c) => {
       expect(a.drains).toHaveLength(2);
       expect(a.roots).toHaveLength(3);
       expect(a.tools).toHaveLength(3);
-      expect(Object.keys(c.markers[id]).sort()).toEqual(["grounded", "shadow_1", "shadow_2"]);
+      expect(Object.keys(c.markers[id]).sort()).toEqual(["grounded", "grounded_2", "shadow_1", "shadow_2", "shadow_3"]);
       const x = c.extras[id];
       expect(x.superpowers).toHaveLength(3);
       expect(Object.keys(x.spheres).sort()).toEqual(["family", "friends", "self", "work"]);
@@ -61,6 +61,15 @@ describe.each(LANGS)("content %s", (_, c) => {
   it("uses no em dashes", () => {
     expect(strings(c).filter((s) => s.includes("—"))).toEqual([]);
   });
+});
+
+it("intro and landing mention the real number of questions", () => {
+  for (const c of [ru, kk]) {
+    expect(c.ui.introSteps[0][0]).toContain(String(DILEMMAS.length));
+    expect(c.ui.introSteps[0][1]).toContain("21");
+    expect(c.ui.introSteps[1][0]).toContain("18");
+    expect(c.landing.hero.lead).toContain(String(DILEMMAS.length));
+  }
 });
 
 it("Kazakh differs from Russian everywhere it should", () => {

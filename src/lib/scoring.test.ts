@@ -18,11 +18,15 @@ const ZERO = Object.fromEntries(
 ) as Record<ArchetypeId, number>;
 
 describe("tallyVotes", () => {
-  it("distributes all 20 votes", () => {
-    const choices: Choice[] = DILEMMAS.map(() => "a");
-    const scores = tallyVotes(choices);
-    expect(Object.values(scores).reduce((s, v) => s + v, 0)).toBe(20);
-    expect(scores.ARCH_12).toBe(2); // ARCH_12 стоит в позиции «А» в дилеммах 16 и 20
+  it("distributes one vote per dilemma", () => {
+    const scores = tallyVotes(DILEMMAS.map(() => "a"));
+    expect(Object.values(scores).reduce((s, v) => s + v, 0)).toBe(DILEMMAS.length);
+  });
+
+  it("gives a card at most six votes, because it appears six times", () => {
+    // Всегда выбираем ARCH_12, когда он есть, и первый вариант в остальных вопросах.
+    const choices: Choice[] = DILEMMAS.map((d) => (d.b === "ARCH_12" ? "b" : "a"));
+    expect(tallyVotes(choices).ARCH_12).toBe(6);
   });
 });
 
@@ -62,9 +66,18 @@ describe("resolveTop", () => {
 
 describe("maturity index", () => {
   it("follows the formula", () => {
-    expect(maturityIndex(1, 1, 5)).toBeCloseTo((10 / 12) * 100);
-    expect(maturityIndex(5, 5, 1)).toBeCloseTo((2 / 12) * 100);
-    expect(maturityIndex(3, 3, 3)).toBeCloseTo(50);
+    // Исходная формула: grounded·2 / ((shadow_1 + shadow_2) + grounded·2) · 100%.
+    expect(maturityIndex([1, 1], [5])).toBeCloseTo((10 / 12) * 100);
+    expect(maturityIndex([5, 5], [1])).toBeCloseTo((2 / 12) * 100);
+    expect(maturityIndex([3, 3], [3])).toBeCloseTo(50);
+  });
+
+  it("uses averages when a card has several shadow and grounded statements", () => {
+    // 3 теневых и 2 опорных: ḡ / (s̄ + ḡ)
+    expect(maturityIndex([2, 2, 2], [4, 4])).toBeCloseTo((4 / 6) * 100);
+    expect(maturityIndex([1, 3, 5], [3, 3])).toBeCloseTo(50);
+    // Порядок и распределение внутри группы не важны, важны только средние.
+    expect(maturityIndex([1, 5, 3], [2, 4])).toBeCloseTo(maturityIndex([3, 3, 3], [3, 3]));
   });
 
   it("maps zones on boundaries", () => {
@@ -83,18 +96,26 @@ describe("validity", () => {
   });
 
   it("penalizes identical maturity answers and rushing", () => {
-    const v = assessValidity([3, 3, 3], [4, 4, 4, 4, 4, 4, 4, 4, 4], Array(12).fill(800));
+    const v = assessValidity([3, 3, 3], Array(15).fill(4), Array(18).fill(800));
     expect(v.straightLining).toBe(true);
     expect(v.rushed).toBe(true);
     expect(v.validityIndex).toBe(55);
-    const ok = assessValidity([2, 3, 2], [2, 4, 3, 1, 5, 2, 3, 3, 4], Array(12).fill(4000));
+    const ok = assessValidity([2, 3, 2], [2, 4, 3, 1, 5, 2, 3, 3, 4, 1, 2, 5, 3, 4, 2], Array(18).fill(4000));
     expect(ok).toMatchObject({ straightLining: false, rushed: false, validityIndex: 100 });
   });
 
   it("caps MI at 65% when defense flag is raised", () => {
     const top: ArchetypeId[] = ["ARCH_01", "ARCH_02", "ARCH_04"];
     const answers: Record<string, Likert> = { L1: 1, L2: 1, L3: 1 };
-    for (const id of top) Object.assign(answers, { [`${id}_shadow_1`]: 1, [`${id}_shadow_2`]: 1, [`${id}_grounded`]: 5 });
+    for (const id of top) {
+      Object.assign(answers, {
+        [`${id}_shadow_1`]: 1,
+        [`${id}_shadow_2`]: 1,
+        [`${id}_shadow_3`]: 1,
+        [`${id}_grounded`]: 5,
+        [`${id}_grounded_2`]: 5,
+      });
+    }
     const r = computeResult({ ...ZERO, ARCH_01: 5, ARCH_02: 4, ARCH_04: 3 }, top, answers);
     expect(r.top.every((t) => t.mi === 65 && t.capped)).toBe(true);
     expect(r.selfEsteem).toBe("forming");
@@ -127,11 +148,54 @@ describe("self-esteem", () => {
 });
 
 describe("stage 2", () => {
-  it("contains 9 maturity + 3 lie items covering every marker", () => {
+  it("contains 15 maturity + 3 lie items covering every marker", () => {
     const items = buildStage2Items(["ARCH_01", "ARCH_06", "ARCH_11"]);
-    expect(items).toHaveLength(12);
+    expect(items).toHaveLength(18);
     expect(items.filter((i) => i.type === "lie")).toHaveLength(3);
-    const ids = new Set(items.map((i) => i.id));
-    expect(ids.size).toBe(12);
+    expect(items.filter((i) => i.type === "maturity")).toHaveLength(15);
+    expect(new Set(items.map((i) => i.id)).size).toBe(18);
+    for (const id of ["ARCH_01", "ARCH_06", "ARCH_11"]) {
+      const kinds = items.filter((i) => i.type === "maturity" && i.archetype === id).map((i) => i.type === "maturity" && i.kind);
+      expect(kinds.sort()).toEqual(["grounded", "grounded_2", "shadow_1", "shadow_2", "shadow_3"]);
+    }
+  });
+
+  it("never asks two statements of the same card in a row", () => {
+    const items = buildStage2Items(["ARCH_03", "ARCH_05", "ARCH_09"]);
+    for (let i = 1; i < items.length; i++) {
+      const a = items[i - 1];
+      const b = items[i];
+      if (a.type === "maturity" && b.type === "maturity") expect(a.archetype).not.toBe(b.archetype);
+    }
+  });
+});
+
+describe("dilemmas", () => {
+  it("has 36 pairs and shows every card exactly six times", () => {
+    expect(DILEMMAS).toHaveLength(36);
+    const counts = new Map<string, number>();
+    for (const d of DILEMMAS) for (const id of [d.a, d.b]) counts.set(id, (counts.get(id) ?? 0) + 1);
+    expect(counts.size).toBe(12);
+    expect([...counts.values()].every((n) => n === 6)).toBe(true);
+  });
+
+  it("never pairs a card with itself and does not repeat a card in neighbouring questions", () => {
+    DILEMMAS.forEach((d, i) => {
+      expect(d.a).not.toBe(d.b);
+      const next = DILEMMAS[i + 1];
+      if (next) expect([d.a, d.b].some((id) => id === next.a || id === next.b)).toBe(false);
+    });
+  });
+
+  it("computes a full result from five statements per card", () => {
+    const top: ArchetypeId[] = ["ARCH_01", "ARCH_02", "ARCH_03"];
+    const answers: Record<string, Likert> = { L1: 3, L2: 3, L3: 2 };
+    for (const id of top) {
+      Object.assign(answers, { [`${id}_shadow_1`]: 2, [`${id}_shadow_2`]: 4, [`${id}_shadow_3`]: 3, [`${id}_grounded`]: 4, [`${id}_grounded_2`]: 5 });
+    }
+    const r = computeResult({ ...ZERO, ARCH_01: 6, ARCH_02: 6, ARCH_03: 6 }, top, answers);
+    expect(r.top[0].shadowAvg).toBe(3);
+    expect(r.top[0].groundedAvg).toBe(4.5);
+    expect(r.top[0].mi).toBeCloseTo((4.5 / 7.5) * 100);
   });
 });
