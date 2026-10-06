@@ -1,4 +1,5 @@
 import type { Content } from "../types";
+import { landingKk } from "./landing";
 import { archetypesKk } from "./archetypes";
 
 export const kk: Content = {
@@ -137,6 +138,7 @@ export const kk: Content = {
       disclaimer: "Әлеует пен Кемелдік Матрицасы: авторлық әдістеме. Нәтиже клиникалық диагноз емес.",
     },
   },
+  landing: landingKk,
   archetypes: archetypesKk,
   dilemmas: [
     {

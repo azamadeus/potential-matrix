@@ -11,6 +11,7 @@ import {
   secondsLeft,
   type FlowState,
 } from "@/lib/flow";
+import { Link } from "react-router-dom";
 import { useLang } from "@/i18n/context";
 import { InsightBanner } from "./test/InsightBanner";
 import { LangSwitcher } from "./LangSwitcher";
@@ -116,7 +117,9 @@ export function TestApp() {
     <main className={`mx-auto w-full px-4 sm:px-6 py-8 sm:py-14 flex flex-col gap-8 ${wide ? "max-w-6xl" : "max-w-3xl"}`}>
       {state.phase === "intro" || state.phase === "results" ? (
         <div className="flex items-center justify-between gap-3 no-print">
-          <span className="font-display text-sm font-extrabold">{c.ui.appShort}</span>
+          <Link to="/" className="font-display text-sm font-extrabold hover:underline" aria-label={c.landing.footer.home}>
+            {c.ui.appShort}
+          </Link>
           <div className="flex flex-wrap items-center justify-end gap-3">
             <LangSwitcher />
             <ThemeSwitcher />

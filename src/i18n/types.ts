@@ -180,8 +180,30 @@ export interface UiText {
   };
 }
 
+export interface LandingText {
+  nav: { about: string; deck: string; example: string; pricing: string; faq: string; start: string };
+  hero: { kicker: string; title: string; lead: string; cta: string; ctaSecondary: string; note: string };
+  why: { title: string; items: { title: string; text: string }[] };
+  how: { title: string };
+  deck: { title: string; lead: string };
+  example: { title: string; lead: string; note: string };
+  pricing: {
+    title: string;
+    lead: string;
+    pricePlaceholder: string;
+    personal: { name: string; period: string; features: string[]; cta: string };
+    company: { name: string; badge: string; priceFrom: (price: string) => string; period: string; features: string[]; cta: string };
+    note: string;
+  };
+  checkout: { title: string; text: string; testCta: string; contactCta: string; close: string };
+  faq: { title: string; items: { q: string; a: string }[] };
+  final: { title: string; lead: string; cta: string };
+  footer: { contacts: string; contactPlaceholder: string; home: string };
+}
+
 export interface Content {
   ui: UiText;
+  landing: LandingText;
   archetypes: Record<ArchetypeId, ArchetypeText>;
   /** Тексты 20 дилемм в том же порядке, что и DILEMMAS. */
   dilemmas: { a: string; b: string }[];

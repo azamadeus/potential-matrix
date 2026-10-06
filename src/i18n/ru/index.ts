@@ -1,4 +1,5 @@
 import type { Content } from "../types";
+import { landingRu } from "./landing";
 import { archetypesRu } from "./archetypes";
 
 export const ru: Content = {
@@ -136,6 +137,7 @@ export const ru: Content = {
       disclaimer: "Матрица Потенциала и Зрелости: авторская методика. Результат не является клиническим диагнозом.",
     },
   },
+  landing: landingRu,
   archetypes: archetypesRu,
   dilemmas: [
     { a: "Закрыть список задач, поставить финальную галочку и ощутить видимый результат.", b: "Разложить сложный процесс по полочкам, регламентам и шагам, чтобы исключить хаос." },
