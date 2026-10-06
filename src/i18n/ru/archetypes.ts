@@ -3,8 +3,8 @@ import type { ArchetypeText } from "../types";
 
 export const archetypesRu: Record<ArchetypeId, ArchetypeText> = {
   ARCH_01: {
-    name: "Архитектор Результата",
-    short: "Результат",
+    name: "Гонщик",
+    short: "Гонщик",
     traits: ["Завершение", "Темп", "Планка", "Соревнование"],
     tagline: "Любит доводить дела до конца и обгонять",
     essence:
@@ -50,8 +50,8 @@ export const archetypesRu: Record<ArchetypeId, ArchetypeText> = {
     },
   },
   ARCH_02: {
-    name: "Мастер Структуры",
-    short: "Структура",
+    name: "Планировщик",
+    short: "Планировщик",
     traits: ["Порядок", "Фокус", "Регулярность", "Система"],
     tagline: "Раскладывает хаос по шагам",
     essence:
@@ -92,8 +92,8 @@ export const archetypesRu: Record<ArchetypeId, ArchetypeText> = {
     },
   },
   ARCH_03: {
-    name: "Хранитель Надежности",
-    short: "Надёжность",
+    name: "Ремонтник",
+    short: "Ремонтник",
     traits: ["Слово", "Ответственность", "Починка", "Опора для других"],
     tagline: "Держит слово и чинит то, что сломалось",
     essence:
@@ -135,9 +135,9 @@ export const archetypesRu: Record<ArchetypeId, ArchetypeText> = {
     },
   },
   ARCH_04: {
-    name: "Интегратор Знаний",
-    short: "Знания",
-    traits: ["Глубина", "Любопытство", "Анализ", "Коллекция знаний"],
+    name: "Исследователь",
+    short: "Исследователь",
+    traits: ["Глубина", "Любопытство", "Анализ", "Эрудиция"],
     tagline: "Докапывается до сути",
     essence: "Вы разбираетесь в теме до первопричин, собираете редкие знания и складываете их в понятную картину.",
     shadowPattern: "Ухожу в изучение вместо действия",
@@ -175,8 +175,8 @@ export const archetypesRu: Record<ArchetypeId, ArchetypeText> = {
     },
   },
   ARCH_05: {
-    name: "Стратегический Навигатор",
-    short: "Навигация",
+    name: "Штурман",
+    short: "Штурман",
     traits: ["Варианты", "Риски", "Опыт прошлого", "Трезвый расчёт"],
     tagline: "Видит маршруты и считает риски",
     essence:
@@ -219,8 +219,8 @@ export const archetypesRu: Record<ArchetypeId, ArchetypeText> = {
     },
   },
   ARCH_06: {
-    name: "Архитектор Будущего",
-    short: "Будущее",
+    name: "Мечтатель",
+    short: "Мечтатель",
     traits: ["Идеи", "Воображение", "Перспектива", "Новизна"],
     tagline: "Придумывает новое и видит, к чему всё идёт",
     essence:
@@ -262,8 +262,8 @@ export const archetypesRu: Record<ArchetypeId, ArchetypeText> = {
     },
   },
   ARCH_07: {
-    name: "Проводник Эмпатии",
-    short: "Эмпатия",
+    name: "Эмпат",
+    short: "Эмпат",
     traits: ["Чуткость", "Сопереживание", "Интуиция", "Связь"],
     tagline: "Чувствует людей без слов",
     essence:
@@ -305,8 +305,8 @@ export const archetypesRu: Record<ArchetypeId, ArchetypeText> = {
     },
   },
   ARCH_08: {
-    name: "Инженер Согласия",
-    short: "Согласие",
+    name: "Дипломат",
+    short: "Дипломат",
     traits: ["Мир", "Вовлечение", "Гибкость", "Общий язык"],
     tagline: "Мирит людей и быстро подстраивается",
     essence:
@@ -349,8 +349,8 @@ export const archetypesRu: Record<ArchetypeId, ArchetypeText> = {
     },
   },
   ARCH_09: {
-    name: "Селектор Потенциала",
-    short: "Потенциал",
+    name: "Наставник",
+    short: "Наставник",
     traits: ["Видеть людей", "Доверие", "Рост", "Наставничество"],
     tagline: "Видит, в чём человек силён, и помогает расти",
     essence:
@@ -392,8 +392,8 @@ export const archetypesRu: Record<ArchetypeId, ArchetypeText> = {
     },
   },
   ARCH_10: {
-    name: "Катализатор Действия",
-    short: "Действие",
+    name: "Заводила",
+    short: "Заводила",
     traits: ["Старт", "Решимость", "Ведение", "Уверенность"],
     tagline: "Запускает и берёт управление",
     essence:
@@ -434,8 +434,8 @@ export const archetypesRu: Record<ArchetypeId, ArchetypeText> = {
     },
   },
   ARCH_11: {
-    name: "Проводник Смысла",
-    short: "Смысл",
+    name: "Рассказчик",
+    short: "Рассказчик",
     traits: ["Слово", "Обаяние", "Энергия", "Влияние"],
     tagline: "Зажигает людей словом",
     essence:
@@ -476,8 +476,8 @@ export const archetypesRu: Record<ArchetypeId, ArchetypeText> = {
     },
   },
   ARCH_12: {
-    name: "Стратег Совершенства",
-    short: "Совершенство",
+    name: "Маэстро",
+    short: "Маэстро",
     traits: ["Качество", "Принципы", "Справедливость", "Настройка системы"],
     tagline: "Доводит хорошее до отличного",
     essence:

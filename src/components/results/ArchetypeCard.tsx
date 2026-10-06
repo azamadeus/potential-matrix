@@ -25,14 +25,10 @@ export function ArchetypeCard({ result }: { result: ArchetypeResult }) {
         </span>
       </div>
       <div className="flex flex-col gap-2 px-1">
-        <div className="flex items-start justify-between gap-2">
-          <h3 className="font-display text-[22px] font-extrabold leading-[1.05] tracking-[-0.02em] [overflow-wrap:anywhere]">
-            {a.name}
-          </h3>
-          <Badge tone={result.zone} className="mt-1">
-            {c.zones[result.zone].level}
-          </Badge>
-        </div>
+        <Badge tone={result.zone} className="self-start">
+          {c.zones[result.zone].level}
+        </Badge>
+        <h3 className="font-display text-[22px] font-extrabold leading-[1.05] tracking-[-0.02em] break-words">{a.name}</h3>
         <p className="text-[15px] leading-snug">{a.essence}</p>
       </div>
       <dl className="grid grid-cols-3 gap-2 px-1">

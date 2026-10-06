@@ -3,8 +3,8 @@ import type { ArchetypeText } from "../types";
 
 export const archetypesKk: Record<ArchetypeId, ArchetypeText> = {
   ARCH_01: {
-    name: "Нәтиже Сәулетшісі",
-    short: "Нәтиже",
+    name: "Жүйрік",
+    short: "Жүйрік",
     traits: ["Аяқтау", "Қарқын", "Белес", "Бәсеке"],
     tagline: "Істі соңына дейін жеткізіп, озып шығуды жақсы көреді",
     essence:
@@ -50,8 +50,8 @@ export const archetypesKk: Record<ArchetypeId, ArchetypeText> = {
     },
   },
   ARCH_02: {
-    name: "Құрылым Шебері",
-    short: "Құрылым",
+    name: "Жоспаршы",
+    short: "Жоспаршы",
     traits: ["Тәртіп", "Фокус", "Жүйелілік", "Жүйе"],
     tagline: "Хаосты қадамдарға бөліп береді",
     essence:
@@ -92,8 +92,8 @@ export const archetypesKk: Record<ArchetypeId, ArchetypeText> = {
     },
   },
   ARCH_03: {
-    name: "Сенімділік Сақшысы",
-    short: "Сенімділік",
+    name: "Шебер",
+    short: "Шебер",
     traits: ["Сөз", "Жауапкершілік", "Жөндеу", "Басқаларға сүйеу"],
     tagline: "Сөзінде тұрады және бұзылғанды жөндейді",
     essence:
@@ -135,9 +135,9 @@ export const archetypesKk: Record<ArchetypeId, ArchetypeText> = {
     },
   },
   ARCH_04: {
-    name: "Білім Интеграторы",
-    short: "Білім",
-    traits: ["Тереңдік", "Қызығушылық", "Талдау", "Білім жинағы"],
+    name: "Зерттеуші",
+    short: "Зерттеуші",
+    traits: ["Тереңдік", "Қызығушылық", "Талдау", "Білімдарлық"],
     tagline: "Мәннің түбіне жетеді",
     essence: "Сіз тақырыпты түп-тамырына дейін зерттейсіз, сирек білім жинайсыз және оны түсінікті суретке құрастырасыз.",
     shadowPattern: "Әрекеттің орнына зерттеуге кетемін",
@@ -175,8 +175,8 @@ export const archetypesKk: Record<ArchetypeId, ArchetypeText> = {
     },
   },
   ARCH_05: {
-    name: "Стратегиялық Штурман",
-    short: "Бағдар",
+    name: "Бағдаршы",
+    short: "Бағдаршы",
     traits: ["Нұсқалар", "Тәуекел", "Өткен тәжірибе", "Салқын есеп"],
     tagline: "Жолдарды көріп, тәуекелді есептейді",
     essence:
@@ -218,8 +218,8 @@ export const archetypesKk: Record<ArchetypeId, ArchetypeText> = {
     },
   },
   ARCH_06: {
-    name: "Болашақ Сәулетшісі",
-    short: "Болашақ",
+    name: "Арманшыл",
+    short: "Арманшыл",
     traits: ["Идеялар", "Қиял", "Келешек", "Жаңалық"],
     tagline: "Жаңаны ойлап табады және бәрі қайда бара жатқанын көреді",
     essence:
@@ -259,8 +259,8 @@ export const archetypesKk: Record<ArchetypeId, ArchetypeText> = {
     },
   },
   ARCH_07: {
-    name: "Эмпатия Жолбасшысы",
-    short: "Эмпатия",
+    name: "Сезімтал",
+    short: "Сезімтал",
     traits: ["Сезімталдық", "Жанашырлық", "Түйсік", "Байланыс"],
     tagline: "Адамдарды сөзсіз сезінеді",
     essence:
@@ -302,8 +302,8 @@ export const archetypesKk: Record<ArchetypeId, ArchetypeText> = {
     },
   },
   ARCH_08: {
-    name: "Келісім Инженері",
-    short: "Келісім",
+    name: "Бітімгер",
+    short: "Бітімгер",
     traits: ["Татулық", "Тарту", "Икемділік", "Ортақ тіл"],
     tagline: "Адамдарды татуластырып, тез бейімделеді",
     essence:
@@ -343,8 +343,8 @@ export const archetypesKk: Record<ArchetypeId, ArchetypeText> = {
     },
   },
   ARCH_09: {
-    name: "Әлеует Іріктеушісі",
-    short: "Әлеует",
+    name: "Тәлімгер",
+    short: "Тәлімгер",
     traits: ["Адамды көру", "Сенім", "Өсу", "Тәлімгерлік"],
     tagline: "Адамның неде мықты екенін көріп, өсуге көмектеседі",
     essence: "Сіз әр адамның басқалардан немен ерекшеленетінін байқайсыз, сенімді қарым-қатынас құрасыз және адамдардың өсуіне көмектесесіз.",
@@ -384,8 +384,8 @@ export const archetypesKk: Record<ArchetypeId, ArchetypeText> = {
     },
   },
   ARCH_10: {
-    name: "Әрекет Катализаторы",
-    short: "Әрекет",
+    name: "Бастамашы",
+    short: "Бастамашы",
     traits: ["Бастау", "Батылдық", "Бастау беру", "Сенімділік"],
     tagline: "Іске қосады және басқаруды алады",
     essence:
@@ -426,8 +426,8 @@ export const archetypesKk: Record<ArchetypeId, ArchetypeText> = {
     },
   },
   ARCH_11: {
-    name: "Мағына Жолбасшысы",
-    short: "Мағына",
+    name: "Шешен",
+    short: "Шешен",
     traits: ["Сөз", "Тартымдылық", "Қуат", "Ықпал"],
     tagline: "Адамдарды сөзбен жандандырады",
     essence:
@@ -467,8 +467,8 @@ export const archetypesKk: Record<ArchetypeId, ArchetypeText> = {
     },
   },
   ARCH_12: {
-    name: "Кемелдік Стратегі",
-    short: "Кемелдік",
+    name: "Маэстро",
+    short: "Маэстро",
     traits: ["Сапа", "Ұстаным", "Әділдік", "Жүйені баптау"],
     tagline: "Жақсыны үздікке жеткізеді",
     essence:
