@@ -1,19 +1,18 @@
 import { useState } from "react";
-import { ArrowRight, Check, ChevronDown } from "lucide-react";
+import { ArrowRight, ChevronDown } from "lucide-react";
 import { Link } from "react-router-dom";
 import { ArchetypeGlyph } from "@/components/ArchetypeGlyph";
 import { LangSwitcher } from "@/components/LangSwitcher";
 import { ThemeSwitcher } from "@/components/ThemeSwitcher";
 import { ArchetypeCard } from "@/components/results/ArchetypeCard";
-import { Button, ButtonLink } from "@/components/ui/button";
+import { ButtonLink } from "@/components/ui/button";
 import { SITE } from "@/config/site";
 import { ARCHETYPE_IDS } from "@/data/archetypes";
 import { useLang } from "@/i18n/context";
-import { formatPrice, startCheckout, type Plan } from "@/lib/checkout";
 import { maturityIndex, zoneOf } from "@/lib/scoring";
 import type { ArchetypeId, ArchetypeResult, Likert } from "@/lib/types";
-import { cn } from "@/lib/utils";
-import { CheckoutDialog } from "./CheckoutDialog";
+import { CheckoutDialog, type CheckoutNotice } from "./CheckoutDialog";
+import { PricingSection } from "./PricingSection";
 
 /** Вымышленный результат для блока «Как выглядит результат». */
 function sample(id: ArchetypeId, rank: number, votes: number, s1: Likert, s2: Likert, g: Likert): ArchetypeResult {
@@ -35,17 +34,7 @@ const HERO_FAN: { id: ArchetypeId; cls: string }[] = [
 export function Landing() {
   const { c } = useLang();
   const t = c.landing;
-  const [checkoutOpen, setCheckoutOpen] = useState(false);
-
-  const buy = async (plan: Plan) => {
-    if (plan === "company" && SITE.contactUrl) {
-      window.open(SITE.contactUrl, "_blank", "noopener");
-      return;
-    }
-    const res = await startCheckout(plan);
-    if (res.status === "redirect") window.location.href = res.url;
-    else setCheckoutOpen(true);
-  };
+  const [notice, setNotice] = useState<CheckoutNotice | null>(null);
 
   return (
     <div className="flex flex-col">
@@ -172,27 +161,7 @@ export function Landing() {
             <SectionTitle>{t.pricing.title}</SectionTitle>
             <p className="mt-2 text-lg font-medium">{t.pricing.lead}</p>
           </div>
-          <div className="grid gap-6 md:grid-cols-2">
-            <PlanCard
-              name={t.pricing.personal.name}
-              price={formatPrice(SITE.prices.personal, c.ui.locale) ?? t.pricing.pricePlaceholder}
-              period={t.pricing.personal.period}
-              features={t.pricing.personal.features}
-              cta={t.pricing.personal.cta}
-              onClick={() => buy("personal")}
-            />
-            <PlanCard
-              dark
-              badge={t.pricing.company.badge}
-              name={t.pricing.company.name}
-              price={t.pricing.company.priceFrom(formatPrice(SITE.prices.company, c.ui.locale) ?? t.pricing.pricePlaceholder)}
-              period={t.pricing.company.period}
-              features={t.pricing.company.features}
-              cta={t.pricing.company.cta}
-              onClick={() => buy("company")}
-            />
-          </div>
-          <p className="text-sm font-medium">{t.pricing.note}</p>
+          <PricingSection onNotice={setNotice} />
         </section>
 
         {/* Вопросы */}
@@ -226,13 +195,9 @@ export function Landing() {
           <div className="flex flex-col gap-1 text-sm font-medium">
             <span>
               {t.footer.contacts}:{" "}
-              {SITE.contactUrl ? (
-                <a href={SITE.contactUrl} className="underline">
-                  {SITE.contactLabel || SITE.contactUrl}
-                </a>
-              ) : (
-                t.footer.contactPlaceholder
-              )}
+              <a href={`mailto:${SITE.ordersEmail}`} className="underline">
+                {SITE.ordersEmail}
+              </a>
             </span>
             <span>{c.ui.disclaimer}</span>
           </div>
@@ -240,7 +205,7 @@ export function Landing() {
         </div>
       </footer>
 
-      <CheckoutDialog open={checkoutOpen} onClose={() => setCheckoutOpen(false)} />
+      <CheckoutDialog notice={notice} onClose={() => setNotice(null)} />
     </div>
   );
 }
@@ -250,55 +215,5 @@ function SectionTitle({ children }: { children: React.ReactNode }) {
     <h2 className="font-display text-[30px] font-extrabold leading-tight tracking-[-0.02em] sm:text-5xl break-words">
       {children}
     </h2>
-  );
-}
-
-function PlanCard({
-  name,
-  price,
-  period,
-  features,
-  cta,
-  onClick,
-  badge,
-  dark,
-}: {
-  name: string;
-  price: string;
-  period: string;
-  features: string[];
-  cta: string;
-  onClick: () => void;
-  badge?: string;
-  dark?: boolean;
-}) {
-  return (
-    <div
-      className={cn(
-        "flex flex-col gap-5 rounded-[24px] border-2 border-ink p-6 sm:p-8",
-        dark ? "bg-ink text-paper shadow-[8px_8px_0_var(--paper)]" : "bg-paper shadow-hard-lg",
-      )}
-    >
-      <div className="flex flex-wrap items-center justify-between gap-2">
-        <h3 className="font-display text-2xl font-extrabold">{name}</h3>
-        {badge ? (
-          <span className="rounded-full border-2 border-paper px-3 py-0.5 text-xs font-semibold">{badge}</span>
-        ) : null}
-      </div>
-      <div className="flex flex-wrap items-baseline gap-x-2">
-        <span className="font-display text-4xl font-extrabold">{price}</span>
-        <span className={cn("text-sm font-medium", dark ? "opacity-80" : "text-muted")}>{period}</span>
-      </div>
-      <ul className="flex flex-col gap-2.5">
-        {features.map((f) => (
-          <li key={f} className="flex gap-2 leading-snug">
-            <Check className="mt-0.5 size-5 shrink-0" aria-hidden /> {f}
-          </li>
-        ))}
-      </ul>
-      <Button variant={dark ? "secondary" : "primary"} size="lg" className="mt-auto" onClick={onClick}>
-        {cta}
-      </Button>
-    </div>
   );
 }

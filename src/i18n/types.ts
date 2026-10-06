@@ -190,15 +190,42 @@ export interface LandingText {
   pricing: {
     title: string;
     lead: string;
-    pricePlaceholder: string;
-    personal: { name: string; period: string; features: string[]; cta: string };
-    company: { name: string; badge: string; priceFrom: (price: string) => string; period: string; features: string[]; cta: string };
+    qtyLabel: string;
+    decrease: string;
+    increase: string;
+    people: (n: number) => string;
+    tierNone: string;
+    tierDiscount: (pct: number) => string;
+    perPerson: string;
+    total: string;
+    savings: (amount: string) => string;
+    includedTitle: string;
+    features: string[];
+    buy: (qty: number) => string;
+    avrToggle: string;
+    avrHint: string;
+    company: string;
+    bin: string;
+    binError: string;
+    email: string;
+    emailError: string;
+    companyError: string;
+    bigGroup: (max: number) => string;
+    writeUs: string;
     note: string;
   };
-  checkout: { title: string; text: string; testCta: string; contactCta: string; close: string };
+  checkout: {
+    title: string;
+    text: string;
+    testCta: string;
+    close: string;
+    avrTitle: string;
+    avrText: (email: string) => string;
+    avrAgain: string;
+  };
   faq: { title: string; items: { q: string; a: string }[] };
   final: { title: string; lead: string; cta: string };
-  footer: { contacts: string; contactPlaceholder: string; home: string };
+  footer: { contacts: string; home: string };
 }
 
 export interface Content {
