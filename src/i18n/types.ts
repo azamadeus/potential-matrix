@@ -209,8 +209,11 @@ export interface UiText {
 }
 
 export interface LandingText {
-  nav: { about: string; deck: string; example: string; pricing: string; faq: string; start: string };
-  hero: { kicker: string; title: string; lead: string; cta: string; ctaSecondary: string; note: string };
+  nav: { forWhom: string; result: string; team: string; pricing: string; faq: string; start: string };
+  hero: { kicker: string; title: string; lead: string; cta: string; ctaSecondary: string; note: string; bullets: string[] };
+  forWhom: { title: string; lead: string; items: { title: string; text: string }[] };
+  get: { title: string; lead: string; items: { title: string; text: string }[]; notTitle: string; notItems: string[] };
+  team: { kicker: string; title: string; lead: string; items: string[]; cta: string };
   why: { title: string; items: { title: string; text: string }[] };
   how: { title: string };
   deck: { title: string; lead: string };

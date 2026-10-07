@@ -1,11 +1,12 @@
 import { useState } from "react";
-import { ArrowRight, ChevronDown } from "lucide-react";
+import { ArrowRight, Check, ChevronDown } from "lucide-react";
 import { Link } from "react-router-dom";
 import { ArchetypeGlyph } from "@/components/ArchetypeGlyph";
 import { LangSwitcher } from "@/components/LangSwitcher";
 import { ThemeSwitcher } from "@/components/ThemeSwitcher";
 import { ArchetypeCard } from "@/components/results/ArchetypeCard";
 import { ButtonLink } from "@/components/ui/button";
+import { buttonClass } from "@/components/ui/button-variants";
 import { SITE } from "@/config/site";
 import { ARCHETYPE_IDS } from "@/data/archetypes";
 import { useLang } from "@/i18n/context";
@@ -45,9 +46,9 @@ export function Landing() {
             {c.ui.appShort}
           </Link>
           <nav className="hidden items-center gap-6 text-sm font-semibold lg:flex" aria-label={c.ui.appTitle}>
-            <a href="#about" className="hover:underline">{t.nav.about}</a>
-            <a href="#deck" className="hover:underline">{t.nav.deck}</a>
-            <a href="#example" className="hover:underline">{t.nav.example}</a>
+            <a href="#forwhom" className="hover:underline">{t.nav.forWhom}</a>
+            <a href="#result" className="hover:underline">{t.nav.result}</a>
+            <a href="#team" className="hover:underline">{t.nav.team}</a>
             <a href="#pricing" className="hover:underline">{t.nav.pricing}</a>
             <a href="#faq" className="hover:underline">{t.nav.faq}</a>
           </nav>
@@ -67,7 +68,7 @@ export function Landing() {
             <span className="self-start rounded-full border-2 border-ink bg-paper px-3 py-1 text-sm font-semibold">
               {t.hero.kicker}
             </span>
-            <h1 className="font-display text-[38px] font-extrabold leading-[1.02] tracking-[-0.03em] sm:text-6xl break-words">
+            <h1 className="font-display text-[30px] font-extrabold leading-[1.05] tracking-[-0.03em] sm:text-5xl break-words">
               {t.hero.title}
             </h1>
             <p className="max-w-xl text-lg font-medium leading-snug sm:text-xl">{t.hero.lead}</p>
@@ -79,7 +80,14 @@ export function Landing() {
                 {t.hero.ctaSecondary}
               </a>
             </div>
-            <span className="text-sm font-medium">{t.hero.note}</span>
+            <ul className="flex flex-col gap-2 text-base font-medium">
+              {t.hero.bullets.map((b) => (
+                <li key={b} className="flex items-start gap-2">
+                  <Check className="mt-0.5 size-5 shrink-0" aria-hidden />
+                  {b}
+                </li>
+              ))}
+            </ul>
           </div>
           <div className="flex justify-center overflow-hidden py-6 sm:overflow-visible" aria-hidden>
             {HERO_FAN.map(({ id, cls }) => (
@@ -90,6 +98,49 @@ export function Landing() {
                 <ArchetypeGlyph id={id} size={72} />
               </div>
             ))}
+          </div>
+        </section>
+
+        {/* Кому нужно */}
+        <section id="forwhom" className="flex scroll-mt-24 flex-col gap-8">
+          <div>
+            <SectionTitle>{t.forWhom.title}</SectionTitle>
+            <p className="mt-2 max-w-2xl text-lg font-medium">{t.forWhom.lead}</p>
+          </div>
+          <div className="grid gap-5 sm:grid-cols-2">
+            {t.forWhom.items.map((item) => (
+              <div key={item.title} className="flex flex-col gap-2 rounded-[22px] border-2 border-ink bg-paper p-6 shadow-hard">
+                <h3 className="font-display text-lg font-extrabold leading-tight">{item.title}</h3>
+                <p className="leading-relaxed text-muted">{item.text}</p>
+              </div>
+            ))}
+          </div>
+        </section>
+
+        {/* Что вы получите */}
+        <section id="result" className="flex scroll-mt-24 flex-col gap-8">
+          <div>
+            <SectionTitle>{t.get.title}</SectionTitle>
+            <p className="mt-2 max-w-2xl text-lg font-medium">{t.get.lead}</p>
+          </div>
+          <ul className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+            {t.get.items.map((item, i) => (
+              <li key={item.title} className="flex gap-3 rounded-[18px] border-2 border-ink bg-paper p-5">
+                <span className="font-display text-2xl font-extrabold leading-none">{i + 1}</span>
+                <span className="flex flex-col gap-1">
+                  <span className="font-semibold">{item.title}</span>
+                  <span className="text-sm leading-snug text-muted">{item.text}</span>
+                </span>
+              </li>
+            ))}
+          </ul>
+          <div className="rounded-[18px] border-2 border-dashed border-ink p-5">
+            <h3 className="font-display text-lg font-extrabold">{t.get.notTitle}</h3>
+            <ul className="mt-2 flex flex-col gap-1 text-muted">
+              {t.get.notItems.map((n) => (
+                <li key={n}>— {n}</li>
+              ))}
+            </ul>
           </div>
         </section>
 
@@ -154,6 +205,24 @@ export function Landing() {
             ))}
           </div>
           <p className="text-sm font-medium">{t.example.note}</p>
+        </section>
+
+        {/* Для компаний */}
+        <section id="team" className="flex scroll-mt-24 flex-col gap-6 rounded-[28px] border-2 border-ink bg-paper p-6 shadow-hard sm:p-10">
+          <span className="self-start rounded-full border-2 border-ink px-3 py-1 text-sm font-semibold">{t.team.kicker}</span>
+          <h2 className="font-display text-[28px] font-extrabold leading-tight tracking-[-0.02em] sm:text-4xl break-words">{t.team.title}</h2>
+          <p className="max-w-2xl text-lg font-medium">{t.team.lead}</p>
+          <ul className="grid gap-3 sm:grid-cols-2">
+            {t.team.items.map((it) => (
+              <li key={it} className="flex items-start gap-2 font-medium">
+                <Check className="mt-0.5 size-5 shrink-0" aria-hidden />
+                {it}
+              </li>
+            ))}
+          </ul>
+          <a href="#pricing" className={buttonClass("primary", "lg", "self-start")}>
+            {t.team.cta} <ArrowRight className="size-5" />
+          </a>
         </section>
 
         {/* Тарифы */}

@@ -68,7 +68,7 @@ it("intro and landing mention the real number of questions", () => {
     expect(c.ui.introSteps[0][0]).toContain(String(DILEMMAS.length));
     expect(c.ui.introSteps[0][1]).toContain("21");
     expect(c.ui.introSteps[1][0]).toContain("18");
-    expect(c.landing.hero.lead).toContain(String(DILEMMAS.length));
+    expect(c.landing.faq.items.some((i) => i.a.includes(String(DILEMMAS.length)))).toBe(true);
   }
 });
 
