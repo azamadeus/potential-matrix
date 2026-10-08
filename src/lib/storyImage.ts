@@ -1,5 +1,4 @@
-import { ARCHETYPES } from "@/data/archetypes";
-import { SELF_ESTEEM } from "@/data/selfEsteem";
+import type { Content } from "@/i18n/types";
 import { GLYPHS } from "@/data/glyphs";
 import type { ArchetypeId, TestResult, Zone } from "./types";
 
@@ -10,7 +9,6 @@ const INK = "#111111";
 const PAPER = "#fff4e2";
 const ZONE_COLOR: Record<Zone, string> = { red: "#d93a2b", yellow: "#f5b70a", green: "#1f9d55" };
 const LEVEL: Record<Zone, number> = { red: 1, yellow: 2, green: 3 };
-const LEVEL_NAME: Record<Zone, string> = { red: "тень", yellow: "функционально", green: "опора" };
 
 function cssVar(name: string, fallback: string) {
   const v = getComputedStyle(document.documentElement).getPropertyValue(name).trim();
@@ -31,6 +29,25 @@ function wrap(ctx: CanvasRenderingContext2D, text: string, maxWidth: number): st
   }
   if (line) lines.push(line);
   return lines;
+}
+
+/** Пишет строку, уменьшая кегль, пока она не влезет в maxWidth. */
+function fitText(
+  ctx: CanvasRenderingContext2D,
+  text: string,
+  x: number,
+  y: number,
+  maxWidth: number,
+  size: number,
+  font: string,
+) {
+  let s = size;
+  ctx.font = font.replace("{size}", String(s));
+  while (ctx.measureText(text).width > maxWidth && s > 40) {
+    s -= 4;
+    ctx.font = font.replace("{size}", String(s));
+  }
+  ctx.fillText(text, x, y);
 }
 
 function drawGlyph(ctx: CanvasRenderingContext2D, id: ArchetypeId, x: number, y: number, size: number, color: string) {
@@ -69,11 +86,11 @@ function hardCard(ctx: CanvasRenderingContext2D, x: number, y: number, w: number
   ctx.stroke();
 }
 
-export async function renderStoryImage(result: TestResult): Promise<Blob> {
+export async function renderStoryImage(c: Content, result: TestResult): Promise<Blob> {
   const display = cssVar("--font-unbounded", "sans-serif");
   const body = cssVar("--font-onest", "sans-serif");
   // Google Fonts отдаёт шрифт кусками (латиница, кириллица); canvas сам их не подгружает.
-  const sample = "Моя рука 0123456789 /·:. Aa";
+  const sample = `${c.ui.storyHeading} ${c.ui.appTitle} 0123456789 /·:. Aa ӘәҒғҚқҢңӨөҰұҮүҺһІі`;
   await Promise.all([
     document.fonts.load(`800 40px ${display}`, sample),
     document.fonts.load(`700 40px ${display}`, sample),
@@ -93,13 +110,13 @@ export async function renderStoryImage(result: TestResult): Promise<Blob> {
 
   ctx.fillStyle = INK;
   ctx.font = `600 34px ${body}`;
-  ctx.fillText("Матрица Потенциала и Зрелости", 80, 130);
+  ctx.fillText(c.ui.appTitle, 80, 130);
   ctx.font = `800 132px ${display}`;
-  ctx.fillText("Моя рука", 74, 270);
+  fitText(ctx, c.ui.storyHeading, 74, 270, 930, 132, `800 {size}px ${display}`);
 
   const tilts = [-1.6, 1.2, -0.8];
   result.top.forEach((r, i) => {
-    const a = ARCHETYPES[r.id];
+    const a = c.archetypes[r.id];
     const x = 80;
     const y = 360 + i * 400;
     const w = 904;
@@ -135,7 +152,7 @@ export async function renderStoryImage(result: TestResult): Promise<Blob> {
     ctx.fillText(mi, tx, zoneY + 44);
     const miW = ctx.measureText(mi).width;
     ctx.font = `600 28px ${body}`;
-    ctx.fillText(`/100 · ${LEVEL_NAME[r.zone]}`, tx + miW + 10, zoneY + 44);
+    ctx.fillText(`/100 · ${c.zones[r.zone].level.toLowerCase()}`, tx + miW + 10, zoneY + 44);
 
     // Уровень зрелости: 3 сегмента.
     const segY = zoneY + 74;
@@ -153,12 +170,12 @@ export async function renderStoryImage(result: TestResult): Promise<Blob> {
   });
 
   // Тип самооценки.
-  const se = SELF_ESTEEM[result.selfEsteem];
+  const se = c.selfEsteem[result.selfEsteem];
   const by = 1580;
   hardCard(ctx, 80, by, 904, 210, 36, INK, PAPER);
   ctx.fillStyle = PAPER;
   ctx.font = `600 30px ${body}`;
-  ctx.fillText("Тип самооценки", 124, by + 64);
+  ctx.fillText(c.ui.selfEsteem, 124, by + 64);
   ctx.font = `800 44px ${display}`;
   wrap(ctx, se.title, 816)
     .slice(0, 2)
@@ -166,7 +183,7 @@ export async function renderStoryImage(result: TestResult): Promise<Blob> {
 
   ctx.fillStyle = INK;
   ctx.font = `600 30px ${body}`;
-  ctx.fillText(`Пройди тест: ${location.host}`, 80, 1876);
+  ctx.fillText(c.ui.storyCta(location.host), 80, 1876);
 
   return new Promise((resolve, reject) =>
     canvas.toBlob((b) => (b ? resolve(b) : reject(new Error("canvas.toBlob failed"))), "image/png"),

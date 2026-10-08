@@ -3,9 +3,10 @@ import { useEffect, useState } from "react";
 import { motion, type PanInfo } from "framer-motion";
 import { cn } from "@/lib/utils";
 import type { Choice } from "@/lib/scoring";
-import type { Dilemma } from "@/lib/types";
+import { useLang } from "@/i18n/context";
 
-const TIME_LIMIT = 10;
+/** Сколько секунд на ответ. Таймер только подсказывает и ничего не пропускает. */
+const TIME_LIMIT = 21;
 const SWIPE_DISTANCE = 80;
 
 /** Постоянные «масти» сторон: не зависят от архетипа, чтобы не подсказывать ответ. */
@@ -26,14 +27,15 @@ function Suit({ side }: { side: Choice }) {
 }
 
 export function DilemmaCard({
-  dilemma,
+  texts,
   previous,
   onChoose,
 }: {
-  dilemma: Dilemma;
+  texts: { a: string; b: string };
   previous?: Choice;
   onChoose: (choice: Choice) => void;
 }) {
+  const { c } = useLang();
   const [selected, setSelected] = useState<Choice | null>(null);
   const [elapsed, setElapsed] = useState(0);
 
@@ -71,14 +73,14 @@ export function DilemmaCard({
     <div className="flex flex-col gap-7">
       <div className="flex flex-col gap-3">
         <h2 className="font-display text-[28px] sm:text-4xl font-extrabold leading-[1.05] tracking-[-0.02em]">
-          Какую карту берёте?
+          {c.ui.dilemmaTitle}
         </h2>
         <div className="flex items-center gap-3">
           <div className="h-2 flex-1 overflow-hidden rounded-full bg-ink/15" aria-hidden>
             <div className="h-full rounded-full bg-ink transition-[width] duration-100 ease-linear" style={{ width: `${(remaining / TIME_LIMIT) * 100}%` }} />
           </div>
           <span className="w-32 text-right text-sm font-semibold tabular-nums">
-            {overtime ? "Берите первую мысль" : `${Math.ceil(remaining)} сек`}
+            {overtime ? c.ui.timerOver : c.ui.seconds(Math.ceil(remaining))}
           </span>
         </div>
       </div>
@@ -113,17 +115,17 @@ export function DilemmaCard({
               )}
             >
               <span className="flex items-center justify-between">
-                <span className="font-display text-2xl font-extrabold">{key === "a" ? "А" : "Б"}</span>
+                <span className="font-display text-2xl font-extrabold">{key === "a" ? c.ui.optionA : c.ui.optionB}</span>
                 <Suit side={key} />
               </span>
-              <span className="text-lg sm:text-xl font-medium leading-snug">{dilemma[key].text}</span>
+              <span className="text-lg sm:text-xl font-medium leading-snug">{texts[key]}</span>
             </motion.button>
           );
         })}
       </motion.div>
       <p className="text-sm font-semibold text-center sm:text-left">
-        <span className="sm:hidden">Нажмите на карту или смахните: влево А, вправо Б</span>
-        <span className="hidden sm:inline">Клавиши: A / ← и B / →</span>
+        <span className="sm:hidden">{c.ui.swipeHint}</span>
+        <span className="hidden sm:inline">{c.ui.keysHint}</span>
       </p>
     </div>
   );

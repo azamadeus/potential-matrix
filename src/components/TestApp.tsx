@@ -11,7 +11,10 @@ import {
   secondsLeft,
   type FlowState,
 } from "@/lib/flow";
+import { Link } from "react-router-dom";
+import { useLang } from "@/i18n/context";
 import { InsightBanner } from "./test/InsightBanner";
+import { LangSwitcher } from "./LangSwitcher";
 import { ThemeSwitcher } from "./ThemeSwitcher";
 import { DilemmaCard } from "./test/DilemmaCard";
 import { IntroScreen } from "./test/IntroScreen";
@@ -29,6 +32,7 @@ function screenKey(s: FlowState): string {
 }
 
 export function TestApp() {
+  const { c } = useLang();
   const [state, dispatch] = useReducer(flowReducer, initialFlow);
   const key = screenKey(state);
 
@@ -36,8 +40,7 @@ export function TestApp() {
     window.scrollTo({ top: 0, behavior: "smooth" });
   }, [state.phase]);
 
-  const left = secondsLeft(state);
-  const timeLeft = left >= 60 ? `≈ ${Math.round(left / 60)} мин` : "< 1 мин";
+  const timeLeft = c.ui.timeLeft(secondsLeft(state));
   // Инсайт держится на двух карточках после контрольной точки.
   const insightPoint = INSIGHT_AT.find((at) => state.index === at || state.index === at + 1);
   const showInsight = state.phase === "stage1" && insightPoint !== undefined;
@@ -48,20 +51,20 @@ export function TestApp() {
       case "stage1":
         return (
           <ProgressHeader
-            stageLabel="Этап 1 · Дилеммы"
+            stageLabel={c.ui.stage1}
             counter={`${state.index + 1} / ${DILEMMAS.length} · ${timeLeft}`}
             progress={progress}
             onBack={state.index > 0 ? () => dispatch({ type: "back" }) : undefined}
           />
         );
       case "tiebreak":
-        return <ProgressHeader stageLabel="Этап 1 · Уточнение" progress={progress} />;
+        return <ProgressHeader stageLabel={c.ui.stage1Tie} progress={progress} />;
       case "stage2intro":
-        return <ProgressHeader stageLabel="Этап 2 · Калибровка" progress={progress} />;
+        return <ProgressHeader stageLabel={c.ui.stage2} progress={progress} />;
       case "stage2":
         return (
           <ProgressHeader
-            stageLabel="Этап 2 · Калибровка"
+            stageLabel={c.ui.stage2}
             counter={`${state.index + 1} / ${state.items.length} · ${timeLeft}`}
             progress={progress}
             onBack={state.index > 0 ? () => dispatch({ type: "back" }) : undefined}
@@ -79,7 +82,7 @@ export function TestApp() {
       case "stage1":
         return (
           <DilemmaCard
-            dilemma={DILEMMAS[state.index]}
+            texts={c.dilemmas[state.index]}
             previous={state.choices[state.index]}
             onChoose={(choice) => dispatch({ type: "choose", choice })}
           />
@@ -96,7 +99,7 @@ export function TestApp() {
           <ScaleCard
             item={item}
             index={state.index}
-            previous={state.answers[item.question.id]}
+            previous={state.answers[item.id]}
             onAnswer={(value, ms) => dispatch({ type: "answer", value, ms })}
           />
         );
@@ -114,8 +117,13 @@ export function TestApp() {
     <main className={`mx-auto w-full px-4 sm:px-6 py-8 sm:py-14 flex flex-col gap-8 ${wide ? "max-w-6xl" : "max-w-3xl"}`}>
       {state.phase === "intro" || state.phase === "results" ? (
         <div className="flex items-center justify-between gap-3 no-print">
-          <span className="font-display text-sm font-extrabold">МПЗ</span>
-          <ThemeSwitcher />
+          <Link to="/" className="font-display text-sm font-extrabold hover:underline" aria-label={c.landing.footer.home}>
+            {c.ui.appShort}
+          </Link>
+          <div className="flex flex-wrap items-center justify-end gap-3">
+            <LangSwitcher />
+            <ThemeSwitcher />
+          </div>
         </div>
       ) : null}
       {header ? <div className="no-print">{header}</div> : null}

@@ -1,6 +1,7 @@
 import { ArrowRight } from "lucide-react";
 import { ArchetypeGlyph } from "@/components/ArchetypeGlyph";
 import { Button } from "@/components/ui/button";
+import { useLang } from "@/i18n/context";
 import type { ArchetypeId } from "@/lib/types";
 
 const FAN: { id: ArchetypeId; rotate: string; offset: string; dark?: boolean }[] = [
@@ -9,13 +10,8 @@ const FAN: { id: ArchetypeId; rotate: string; offset: string; dark?: boolean }[]
   { id: "ARCH_10", rotate: "rotate-12", offset: "translate-y-3" },
 ];
 
-const STEPS = [
-  ["20 дилемм", "Из двух карт берёте ту, что ближе. Думать не дольше 10 секунд."],
-  ["12 утверждений", "Как часто это бывает с вами. Тут важна честность, а не скорость."],
-  ["Ваша рука", "Три ведущих таланта, их зрелость и что с этим делать."],
-] as const;
-
 export function IntroScreen({ onStart }: { onStart: () => void }) {
+  const { c } = useLang();
   return (
     <div className="flex flex-col gap-10">
       <div className="flex justify-center pt-2" aria-hidden>
@@ -30,17 +26,14 @@ export function IntroScreen({ onStart }: { onStart: () => void }) {
       </div>
 
       <div className="flex flex-col gap-4">
-        <h1 className="font-display text-[34px] sm:text-6xl font-extrabold leading-[1.02] tracking-[-0.03em]">
-          Матрица Потенциала и Зрелости
+        <h1 className="font-display text-[34px] sm:text-6xl font-extrabold leading-[1.02] tracking-[-0.03em] [overflow-wrap:anywhere]">
+          {c.ui.appTitle}
         </h1>
-        <p className="text-lg sm:text-xl font-medium max-w-xl leading-snug">
-          Тест покажет три ваших самых сильных таланта и то, как они работают сейчас: спокойно или через силу, чтобы
-          что-то доказать.
-        </p>
+        <p className="text-lg sm:text-xl font-medium max-w-xl leading-snug">{c.ui.introLead}</p>
       </div>
 
       <ol className="grid gap-3 sm:grid-cols-3">
-        {STEPS.map(([title, text], i) => (
+        {c.ui.introSteps.map(([title, text], i) => (
           <li key={title} className="flex gap-3 rounded-[18px] border-2 border-ink bg-paper p-4">
             <span className="font-display text-2xl font-extrabold leading-none">{i + 1}</span>
             <span className="flex flex-col gap-1">
@@ -53,9 +46,9 @@ export function IntroScreen({ onStart }: { onStart: () => void }) {
 
       <div className="flex flex-col sm:flex-row sm:items-center gap-4">
         <Button size="lg" onClick={onStart} className="w-full sm:w-auto">
-          Раздать карты <ArrowRight className="size-5" />
+          {c.ui.start} <ArrowRight className="size-5" />
         </Button>
-        <span className="text-sm font-medium">≈ 4 минуты · ответы остаются на вашем устройстве</span>
+        <span className="text-sm font-medium">{c.ui.introNote}</span>
       </div>
     </div>
   );

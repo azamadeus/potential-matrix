@@ -89,8 +89,8 @@ export function flowReducer(state: FlowState, action: FlowAction): FlowState {
     case "answer": {
       if (state.phase !== "stage2") return state;
       const item = state.items[state.index];
-      const answers = { ...state.answers, [item.question.id]: action.value };
-      const times = { ...state.times, [item.question.id]: action.ms };
+      const answers = { ...state.answers, [item.id]: action.value };
+      const times = { ...state.times, [item.id]: action.ms };
       if (state.index + 1 < state.items.length) {
         return { ...state, answers, times, index: state.index + 1 };
       }
@@ -114,40 +114,49 @@ export function flowReducer(state: FlowState, action: FlowAction): FlowState {
   }
 }
 
-/** Общий прогресс прохождения (0–100). Этап 1 — 60%, Этап 2 — 40%. */
+/** Сколько утверждений во втором этапе: 15 про зрелость (по 5 на карту) и 3 контрольных. */
+export const STAGE2_ITEMS = 18;
+const SECONDS_PER_DILEMMA = 8;
+const SECONDS_PER_STATEMENT = 6;
+
+/** Доля первого этапа в общем пути (по времени): остальное занимает второй этап. */
+const STAGE1_SHARE = (DILEMMAS.length * SECONDS_PER_DILEMMA) / (DILEMMAS.length * SECONDS_PER_DILEMMA + STAGE2_ITEMS * SECONDS_PER_STATEMENT);
+
+/** Общий прогресс прохождения (0–100). */
 export function overallProgress(state: FlowState): number {
+  const s1 = STAGE1_SHARE * 100;
   switch (state.phase) {
     case "intro":
       return 0;
     case "stage1":
-      return (state.index / DILEMMAS.length) * 60;
+      return (state.index / DILEMMAS.length) * s1;
     case "tiebreak":
     case "stage2intro":
-      return 60;
+      return s1;
     case "stage2":
-      return 60 + (state.index / state.items.length) * 40;
+      return s1 + (state.index / state.items.length) * (100 - s1);
     case "results":
       return 100;
   }
 }
 
-/** Примерное оставшееся время в секундах (≈6 с на дилемму, ≈5 с на утверждение). */
+/** Примерное оставшееся время в секундах. */
 export function secondsLeft(state: FlowState): number {
   switch (state.phase) {
     case "stage1":
-      return (DILEMMAS.length - state.index) * 6 + 12 * 5;
+      return (DILEMMAS.length - state.index) * SECONDS_PER_DILEMMA + STAGE2_ITEMS * SECONDS_PER_STATEMENT;
     case "tiebreak":
     case "stage2intro":
-      return 12 * 5;
+      return STAGE2_ITEMS * SECONDS_PER_STATEMENT;
     case "stage2":
-      return (state.items.length - state.index) * 5;
+      return (state.items.length - state.index) * SECONDS_PER_STATEMENT;
     default:
       return 0;
   }
 }
 
-/** Промежуточный инсайт Этапа 1: лидирующий архетип после 7 и 14 ответов. */
-export const INSIGHT_AT = [7, 14];
+/** Промежуточный инсайт Этапа 1: лидирующий архетип после 12 и 24 ответов. */
+export const INSIGHT_AT = [12, 24];
 
 export function leaderSoFar(state: FlowState): ArchetypeId | null {
   const scores = tallyVotes(state.choices.slice(0, state.index));
